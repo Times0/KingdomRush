@@ -9,7 +9,7 @@ if __name__ == '__main__':
     pygame.init()
 
     #   Creating the game window :
-    pygame.display.set_caption('Platformer')  # titre de la fenêtre
+    pygame.display.set_caption('KingdomRush')  # titre de la fenêtre
 
     # Icon:
     # path = ''
@@ -30,12 +30,6 @@ if __name__ == '__main__':
 
         # get events
         events = pygame.event.get()
-        for event in events:
-
-            # closing the game
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
 
         # Main game function
         game.run(events)

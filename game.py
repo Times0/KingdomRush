@@ -1,5 +1,5 @@
 import pygame
-from menu import Menu
+from menu import MainMenu
 from level import Level
 
 class Game :
@@ -7,7 +7,7 @@ class Game :
     def __init__(self):
 
         self.gamestate = 'menu'
-        self.menu = Menu()
+        self.menu = MainMenu()
         self.level = Level()
 
     def run(self, events):
