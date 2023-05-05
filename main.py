@@ -27,7 +27,6 @@ if __name__ == '__main__':
     # Main game loop
     running = True
     while running:
-
         # get events
         events = pygame.event.get()
 
@@ -40,4 +39,3 @@ if __name__ == '__main__':
     # closing the game
     pygame.quit()
     sys.exit()
-

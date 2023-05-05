@@ -1,14 +1,14 @@
-import sys
-
 import pygame
+import sys
 from constants import *
 import os
 from ui import Button
 
 
 class MainMenu:
-    def __init__(self):
+    def __init__(self, show_level):
         self.screen = pygame.display.get_surface()
+        self.show_level = show_level
 
         # Import background image
         bg_path = '../game_assets/bg.png'
@@ -41,7 +41,7 @@ class MainMenu:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.btn.on_mouse_clicked(event):
                     # button clicked
-                    print('button clicked')
+                    self.show_level()
 
             elif event.type == pygame.MOUSEMOTION:
                 if self.btn.on_mouse_motion(event):
