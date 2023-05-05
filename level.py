@@ -12,7 +12,7 @@ class Level:
         self.show_menu = show_menu
 
         # Import background image
-        bg_path = '../game_assets/bg.png'
+        bg_path = 'assets/level/bg.png'
         self.background = pygame.image.load(os.path.join(bg_path))
         self.background = pygame.transform.scale(self.background, (WINDOW_WIDTH, WINDOW_HEIGHT))
 

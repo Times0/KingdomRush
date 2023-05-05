@@ -2,7 +2,7 @@ import pygame
 import sys
 from constants import *
 import os
-from ui import Button
+from ui import Button, ToggleButton
 
 
 class MainMenu:
@@ -11,22 +11,46 @@ class MainMenu:
         self.show_level = show_level
 
         # Import background image
-        bg_path = '../game_assets/bg.png'
+        bg_path = 'assets/main_menu/bg.png'
         self.background = pygame.image.load(os.path.join(bg_path))
         self.background = pygame.transform.scale(self.background, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
-        # Button 1 :
-        # Import button image:
-        btn_path = '../game_assets/button_start.png'
-        self.btn_image = pygame.image.load(os.path.join(btn_path)).convert_alpha()
+        # Buttons list :
+        self.buttons = list()
 
-        # Position button:
-        btn_width = self.btn_image.get_width()
-        btn_height = self.btn_image.get_height()
+        # Start button :
+        btn_path = 'assets/main_menu/button_play.png'
+        btn_image = pygame.image.load(os.path.join(btn_path)).convert_alpha()
+        btn_width = btn_image.get_width()
+        btn_height = btn_image.get_height()
         btn_x = (WINDOW_WIDTH - btn_width) / 2
         btn_y = (WINDOW_HEIGHT - btn_height) / 2
 
-        self.btn = Button(self.btn_image, (btn_x, btn_y))
+        self.start_btn = Button(btn_image, (btn_x, btn_y), on_click=self.show_level)
+        self.buttons.append(self.start_btn)
+
+        # Settings button :
+        btn_path = 'assets/main_menu/button_settings.png'
+        btn_image = pygame.image.load(os.path.join(btn_path)).convert_alpha()
+        btn_width = btn_image.get_width()
+        offset = 10
+        btn_x = WINDOW_WIDTH - btn_width - offset
+        btn_y = offset
+
+        self.settings_btn = Button(btn_image, (btn_x, btn_y))
+        self.buttons.append(self.settings_btn)
+
+        # Sound button :
+        sound_on_path = 'assets/main_menu/button_sound.png'
+        sound_on_image = pygame.image.load(os.path.join(sound_on_path)).convert_alpha()
+        sound_off_path = 'assets/main_menu/button_sound_off.png'
+        sound_off_image = pygame.image.load(os.path.join(sound_off_path)).convert_alpha()
+        offset = 10
+        btn_x = offset
+        btn_y = offset
+
+        self.settings_btn = ToggleButton([sound_on_image, sound_off_image], (btn_x, btn_y))
+        self.buttons.append(self.settings_btn)
 
     def run(self, events):
 
@@ -39,20 +63,27 @@ class MainMenu:
                 sys.exit()
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if self.btn.on_mouse_clicked(event):
-                    # button clicked
-                    self.show_level()
+
+                for button in self.buttons:
+                    if button.on_mouse_clicked(event):
+                        # button clicked
+                        if button.on_click:
+                            button.on_click()
 
             elif event.type == pygame.MOUSEMOTION:
-                if self.btn.on_mouse_motion(event):
-                    # button hovered
-                    pass
+
+                for button in self.buttons:
+
+                    if button.on_mouse_motion(event):
+                        # button hovered
+                        pass
 
         # Background
         self.screen.blit(self.background, (0, 0))
 
         # Button
-        self.btn.draw(self.screen)
+        for button in self.buttons:
+            button.draw(self.screen)
 
         # Updating screen
         pygame.display.flip()
