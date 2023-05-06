@@ -9,15 +9,8 @@ if __name__ == '__main__':
     pygame.init()
 
     #   Creating the game window :
-    pygame.display.set_caption('KingdomRush')  # titre de la fenêtre
-
-    # Icon:
-    # path = ''
-    # win_icon = pygame.image.load(os.path.join(path))
-    # pygame.display.set_icon(win_icon)
-
-    display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT),
-                                              pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.SCALED, vsync=1)
+    pygame.display.set_caption('KingdomRush')
+    display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.FULLSCREEN)
 
     # fps
     clock = pygame.time.Clock()

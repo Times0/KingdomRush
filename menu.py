@@ -2,7 +2,7 @@ import pygame
 import sys
 from constants import *
 import os
-from ui import Button, ToggleButton
+from buttons import Button, ToggleButton
 
 
 class MainMenu:
