@@ -3,6 +3,7 @@ import sys
 import os
 from constants import *
 from shop import VerticalShop
+from enemy import Enemy
 
 
 class Level:
@@ -23,6 +24,16 @@ class Level:
         # creating the menu with each item
         self.shop = VerticalShop('right', item_names=item_names)
 
+        # Enemy list
+        self.enemies = []
+        self.spawn_enemy()
+
+        self.path = []
+
+    def spawn_enemy(self):
+
+        self.enemies.append(Enemy())
+
     def run(self, events):
 
         # event handler
@@ -39,11 +50,20 @@ class Level:
                 if event.key == pygame.K_ESCAPE:
                     self.show_menu()
 
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.path.append(event.pos)
+                print(self.path)
+
         # Background
         self.screen.blit(self.background, (0, 0))
 
         # Shop
         self.shop.draw(self.screen)
+
+        # Enemies
+        for enemy in self.enemies:
+            enemy.update()
+            enemy.draw(self.screen)
 
         # Updating screen
         pygame.display.flip()

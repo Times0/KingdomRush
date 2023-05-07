@@ -17,7 +17,7 @@ class VerticalShop:
         self.width = 150
 
         # Create all the items and position them correctly
-        btn_x = 15
+        btn_x = 0
         btn_y = 15
         y_margin = 20  # pixels between each item
         self.items = []

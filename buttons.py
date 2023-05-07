@@ -74,17 +74,15 @@ class Item:
         btn_x = (self.width - self.image.get_width()) / 2
         self.button = Button(image, (btn_x, pos[1]), on_click)
 
-        self.font = pygame.font.SysFont("comicsans", 20)
+        self.font = pygame.font.SysFont("arial", 20)
         self.text_image = self.font.render(str(self.cost), False, (255, 255, 255)).convert_alpha()
 
         self.star_image = pygame.image.load("assets/shop/star.png").convert_alpha()
         self.star_image = pygame.transform.scale_by(self.star_image,
                                                     (self.text_image.get_height() / self.star_image.get_height()))
 
-        text_x = self.width / 2 - (self.text_image.get_width()) / 2
-        self.text_pos = (self.x + text_x, self.y + self.image.get_width())
-        star_x = text_x - self.star_image.get_width() - 5
-        self.star_pos = (self.x + star_x, self.y + self.image.get_height())
+        self.star_pos = (self.x + btn_x, self.y + self.image.get_height())
+        self.text_pos = (self.star_pos[0] + self.star_image.get_width()+5, self.y + self.image.get_height())
 
         self.height = self.image.get_height() + self.text_image.get_height()
 
