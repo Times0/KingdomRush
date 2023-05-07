@@ -81,7 +81,7 @@ class Enemy:
             else:  # moving up
                 if self.x <= x2 and self.y <= y2:
                     self.update_direction()
-s
+
     def update_direction(self):
         """updates the next point to reach and changes the enemy direction accordingly"""
 
@@ -99,7 +99,6 @@ s
         self.direction = dirn
 
     def draw(self, surface):
-
         if self.facing_right:
             x_offset = self.center[0]
         else:
@@ -109,7 +108,6 @@ s
         surface.blit(self.image, (self.x - x_offset, self.y - y_offset))
 
     def update(self, dt):
-
         self.check_point_reached()
         self.move(dt)
         self.animate(dt)
