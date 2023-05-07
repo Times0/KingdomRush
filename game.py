@@ -16,8 +16,8 @@ class Game:
     def show_menu(self):
         self.gamestate = 'menu'
 
-    def run(self, events):
+    def run(self, events, dt):
         if self.gamestate == 'menu':
             self.main_menu.run(events)
         elif self.gamestate == 'level':
-            self.level.run(events)
+            self.level.run(events, dt)

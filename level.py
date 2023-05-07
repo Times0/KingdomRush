@@ -28,13 +28,11 @@ class Level:
         self.enemies = []
         self.spawn_enemy()
 
-        self.path = []
-
     def spawn_enemy(self):
 
         self.enemies.append(Enemy())
 
-    def run(self, events):
+    def run(self, events, dt):
 
         # event handler
         for event in events:
@@ -50,10 +48,6 @@ class Level:
                 if event.key == pygame.K_ESCAPE:
                     self.show_menu()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.path.append(event.pos)
-                print(self.path)
-
         # Background
         self.screen.blit(self.background, (0, 0))
 
@@ -62,7 +56,7 @@ class Level:
 
         # Enemies
         for enemy in self.enemies:
-            enemy.update()
+            enemy.update(dt)
             enemy.draw(self.screen)
 
         # Updating screen
