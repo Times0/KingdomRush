@@ -65,7 +65,7 @@ class MainMenu:
             elif event.type == pygame.MOUSEBUTTONDOWN:
 
                 for button in self.buttons:
-                    if button.on_mouse_clicked(event):
+                    if button.on_mouse_clicked(event.pos):
                         # button clicked
                         if button.on_click:
                             button.on_click()
@@ -74,7 +74,7 @@ class MainMenu:
 
                 for button in self.buttons:
 
-                    if button.on_mouse_motion(event):
+                    if button.on_mouse_motion(event.pos):
                         # button hovered
                         pass
 

@@ -15,20 +15,18 @@ class Button:
 
         surface.blit(self.image, self.rect)
 
-    def on_mouse_clicked(self, event):
+    def on_mouse_clicked(self, event_pos):
         # returns true if button clicked
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            return self.rect.collidepoint(event.pos)
+        return self.rect.collidepoint(event_pos)
 
-    def on_mouse_motion(self, event):
+    def on_mouse_motion(self, event_pos):
         # returns true if hovered
 
-        if event.type == pygame.MOUSEMOTION:
-            if self.rect.collidepoint(event.pos):
-                return True
-            else:
-                return False
+        if self.rect.collidepoint(event_pos):
+            return True
+        else:
+            return False
 
 
 class ToggleButton(Button):
@@ -42,15 +40,14 @@ class ToggleButton(Button):
         self.image_index = 0
         self.image = images[self.image_index]
 
-    def on_mouse_clicked(self, event):
+    def on_mouse_clicked(self, event_pos):
         # returns true if button clicked
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.change_image()
-                return True
-            else:
-                return False
+        if self.rect.collidepoint(event_pos):
+            self.change_image()
+            return True
+        else:
+            return False
 
     def change_image(self):
         # changes button image on click
@@ -63,7 +60,9 @@ class ToggleButton(Button):
 
 class Item:
 
-    def __init__(self, image, pos, menu_width, name, cost, on_click=None):
+    def __init__(self, image, pos, menu_width, name, cost, assets_path=None, on_click=None):
+
+        # position relative to menu
         self.width = menu_width
         self.name = name
         self.cost = cost
@@ -71,6 +70,7 @@ class Item:
         self.pos = pos
         self.x = pos[0]
         self.y = pos[1]
+        self.assets_path = assets_path
         btn_x = (self.width - self.image.get_width()) / 2
         self.button = Button(image, (btn_x, pos[1]), on_click)
 

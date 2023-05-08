@@ -20,9 +20,9 @@ if __name__ == '__main__':
     # Main game loop
     running = True
     while running:
+
         # FPS
-        dt = clock.tick(FPS)
-        dt = dt/1000
+        dt = clock.tick(FPS)/1000
 
         # get events
         events = pygame.event.get()

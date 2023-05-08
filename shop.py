@@ -7,7 +7,9 @@ from data import items_data
 
 class VerticalShop:
 
-    def __init__(self, side, item_names):
+    def __init__(self, side, item_names, buy_item):
+
+        self.buy_item = buy_item
 
         # Import background image :
         bg_path = 'assets/shop/side.png'
@@ -46,7 +48,8 @@ class VerticalShop:
         image = pygame.image.load(os.path.join(items_data['path'], data[0])).convert_alpha()
         image = pygame.transform.scale_by(image, .5)
         cost = data[1]
-        item = Item(image, (btn_x, btn_y), self.width, name, cost)
+        on_click = self.buy_item
+        item = Item(image, (btn_x, btn_y), self.width, name, cost, on_click=on_click)
         return item
 
     def draw(self, surface):
@@ -54,3 +57,13 @@ class VerticalShop:
 
         for item in self.items:
             item.draw(self.background)
+
+    def update(self, event):
+
+        shop_pos = (event.pos[0]-self.x, event.pos[1]-self.y)
+        for item in self.items:
+            button = item.button
+            if button.on_mouse_clicked(shop_pos):
+                # button clicked
+                if button.on_click:
+                    button.on_click(event.pos, item.name)
