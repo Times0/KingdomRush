@@ -2,6 +2,9 @@ from load_assets import import_folder, import_animations
 from data import items_data
 import math
 import pygame
+from shop import VerticalShop
+from buttons import Item
+import os
 
 
 class Tower:
@@ -14,6 +17,7 @@ class Tower:
         self.max_level = len(self.upgrade_cost)
         self.level = level
         self.placed = False
+        self.selected = False
 
         # size and pos
         self.centerx = centerx
@@ -26,14 +30,27 @@ class Tower:
         self.x = self.centerx - self.width / 2
         self.y = self.centery - self.height / 2
 
+        image = pygame.image.load(os.path.join('assets\\shop', 'upgrade.png')).convert_alpha()
+        image = pygame.transform.scale_by(image, .5)
+        cost = self.upgrade_cost[self.level]
+        on_click = self.upgrade
+        item = Item(image, (0, 10), 150, name, cost, on_click=on_click)
+        self.upgrade_menu = VerticalShop([item], width=150)
+
     def upgrade(self):
 
-        self.level += 1
+        if self.level < self.max_level:
+            self.level += 1
+            if self.level != self.max_level:
+                new_cost = self.upgrade_cost[self.level]
+                self.upgrade_menu.items[0].change_cost(new_cost)
         self.image = self.images[self.level]
+        self.selected = False
 
     def draw(self, surface):
-
         surface.blit(self.image, (self.x, self.y))
+        if self.selected:
+            self.upgrade_menu.draw(surface)
 
     def update_pos(self, pos):
         self.centerx = pos[0]
@@ -41,12 +58,26 @@ class Tower:
         self.x = self.centerx - self.width / 2
         self.y = self.centery - self.height / 2
 
+    def check_click(self, event_pos):
+        # check if tower is clicked
+
+        rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        if rect.collidepoint(event_pos):
+            if not self.selected:
+                self.selected = True
+            else:
+                self.upgrade_menu.update(event_pos)
+        else:
+            self.selected = False
+
     def place(self, pos):
         self.placed = True
         self.centerx = pos[0]
         self.centery = pos[1]
         self.x = self.centerx - self.width / 2
         self.y = self.centery - self.height / 2
+        self.upgrade_menu.x = self.centerx - self.upgrade_menu.width / 2
+        self.upgrade_menu.y = self.centery - self.upgrade_menu.height / 2
 
 
 class ArcherTower(Tower):
@@ -93,6 +124,9 @@ class ArcherTower(Tower):
 
         surface.blit(self.image, (self.x, self.y))
         surface.blit(self.archer_image, (self.archer_x, self.archer_y))
+
+        if self.selected:
+            self.upgrade_menu.draw(surface)
 
     def update_pos(self, pos):
 

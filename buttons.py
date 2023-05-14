@@ -10,10 +10,11 @@ class Button:
         self.image = image
         self.rect = self.image.get_rect(x=pos[0], y=pos[1])
 
-    def draw(self, surface):
+    def draw(self, surface, pos=(0,0)):
         # draws the button
-
-        surface.blit(self.image, self.rect)
+        x = pos[0] + self.rect.x
+        y = pos[1] + self.rect.y
+        surface.blit(self.image, (x,y))
 
     def on_mouse_clicked(self, event_pos):
         # returns true if button clicked
@@ -61,7 +62,6 @@ class ToggleButton(Button):
 class Item:
 
     def __init__(self, image, pos, menu_width, name, cost, assets_path=None, on_click=None):
-
         # position relative to menu
         self.width = menu_width
         self.name = name
@@ -82,19 +82,25 @@ class Item:
                                                     (self.text_image.get_height() / self.star_image.get_height()))
 
         self.star_pos = (self.x + btn_x, self.y + self.image.get_height())
-        self.text_pos = (self.star_pos[0] + self.star_image.get_width()+5, self.y + self.image.get_height())
+        self.text_pos = (self.star_pos[0] + self.star_image.get_width() + 5, self.y + self.image.get_height())
 
         self.height = self.image.get_height() + self.text_image.get_height()
 
-        self.surface = pygame.Surface((self.width, self.height)).convert_alpha()
-        self.surface.set_colorkey((0, 0, 0))
-        self.surface.blit(self.image, (0, 0))
-        self.surface.blit(self.star_image, (0, self.image.get_height()))
-        self.surface.blit(self.text_image, (self.star_image.get_width(), self.image.get_height()))
+        # self.surface = pygame.Surface((self.width, self.height)).convert_alpha()
+        # self.surface.set_colorkey((0, 0, 0))
+        # self.surface.blit(self.image, (0, 0))
+        # self.surface.blit(self.star_image, (0, self.image.get_height()))
+        # self.surface.blit(self.text_image, (self.star_image.get_width(), self.image.get_height()))
+        #
+        # self.rect = self.surface.get_rect()
 
-        self.rect = self.surface.get_rect()
+    def change_cost(self, new_cost):
+        self.cost = new_cost
+        self.text_image = self.font.render(str(new_cost), True, (255, 255, 255)).convert_alpha()
+        self.text_pos = (self.star_pos[0] + self.star_image.get_width() + 5, self.y + self.image.get_height())
 
-    def draw(self, surface):
-        self.button.draw(surface)
-        surface.blit(self.star_image, self.star_pos)
-        surface.blit(self.text_image, self.text_pos)
+    def draw(self, surface, pos):
+
+        self.button.draw(surface, pos)
+        surface.blit(self.star_image, (pos[0]+self.star_pos[0], pos[1]+self.star_pos[1]))
+        surface.blit(self.text_image, (pos[0]+self.text_pos[0], pos[1]+self.text_pos[1]))

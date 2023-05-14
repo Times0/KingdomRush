@@ -7,16 +7,53 @@ from data import items_data
 
 class VerticalShop:
 
-    def __init__(self, side, item_names, buy_item):
+    def __init__(self, items, width=150, y_margin=0):
 
-        self.buy_item = buy_item
+        self.items = items
+
+        self.x = 0
+        self.y = 0
 
         # Import background image :
         bg_path = 'assets/shop/side.png'
         self.background = pygame.image.load(os.path.join(bg_path)).convert_alpha()
+        self.background.set_alpha(255)
 
-        self.height = 20
+        self.width = width
+        self.y_margin = y_margin
+        self.height = (self.items[0].height + self.y_margin) * len(self.items) + 20
+
+        # resize background based on the items that are in it
+        self.background = pygame.transform.scale(self.background, (self.width, self.height))
+
+    def draw(self, surface):
+
+        surface.blit(self.background, (self.x, self.y))
+
+        for item in self.items:
+            item.draw(surface, (self.x, self.y))
+
+    def update(self, event_pos):
+
+        shop_pos = (event_pos[0] - self.x, event_pos[1] - self.y)
+
+        for item in self.items:
+            button = item.button
+
+            if button.on_mouse_clicked(shop_pos):
+                # button clicked
+                if button.on_click:
+                    button.on_click()
+
+
+class MainShop(VerticalShop):
+
+    def __init__(self, side, item_names, buy_item):
+
+        self.buy_item = buy_item
+
         self.width = 150
+        self.height = 0
 
         # Create all the items and position them correctly
         btn_x = 0
@@ -29,8 +66,7 @@ class VerticalShop:
             self.items.append(item)
         self.height += btn_y - y_margin
 
-        # resize background based on the items that are in it
-        self.background = pygame.transform.scale(self.background, (self.width, self.height))
+        super().__init__(self.items, width=self.width, y_margin=y_margin)
 
         # position the whole menu
         screen_border_margin = 15
@@ -52,18 +88,14 @@ class VerticalShop:
         item = Item(image, (btn_x, btn_y), self.width, name, cost, on_click=on_click)
         return item
 
-    def draw(self, surface):
-        surface.blit(self.background, (self.x, self.y))
+    def update(self, event_pos):
 
-        for item in self.items:
-            item.draw(self.background)
+        shop_pos = (event_pos[0] - self.x, event_pos[1] - self.y)
 
-    def update(self, event):
-
-        shop_pos = (event.pos[0]-self.x, event.pos[1]-self.y)
         for item in self.items:
             button = item.button
+
             if button.on_mouse_clicked(shop_pos):
                 # button clicked
                 if button.on_click:
-                    button.on_click(event.pos, item.name)
+                    button.on_click(event_pos, item.name)

@@ -2,7 +2,7 @@ import pygame
 import sys
 import os
 from constants import *
-from shop import VerticalShop
+from shop import VerticalShop, MainShop
 from enemy import Enemy
 from tower import Tower, ArcherTower
 
@@ -23,7 +23,7 @@ class Level:
         item_names = ['archers lvl 1', 'archers lvl 2', 'increase damage', 'increase range']
 
         # creating the menu with each item
-        self.shop = VerticalShop('right', item_names=item_names, buy_item=self.buy_item)
+        self.shop = MainShop('right', item_names=item_names, buy_item=self.buy_item)
 
         # Enemy list
         self.enemies = []
@@ -32,6 +32,7 @@ class Level:
         # Towers list
         self.archer_towers = []
         self.support_towers = []
+        self.towers = []
         self.tower_selected = None
 
     def spawn_enemy(self):
@@ -43,9 +44,11 @@ class Level:
         if name[0:6] == 'archer':
             tower = ArcherTower(pos[0], pos[1], name)
             self.archer_towers.append(tower)
+            self.towers.append(tower)
         else:
             tower = Tower(pos[0], pos[1], name)
             self.support_towers.append(tower)
+            self.towers.append(tower)
         self.tower_selected = tower
 
     def run(self, events, dt):
@@ -72,8 +75,11 @@ class Level:
                 if self.tower_selected is not None:
                     self.tower_selected.place(event.pos)
                     self.tower_selected = None
+                else:
+                    for tower in self.towers:
+                        tower.check_click(event.pos)
 
-                self.shop.update(event)
+                self.shop.update(event.pos)
 
         # Background
         self.screen.blit(self.background, (0, 0))
