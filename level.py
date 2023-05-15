@@ -2,7 +2,7 @@ import pygame
 import sys
 import os
 from constants import *
-from shop import VerticalShop, MainShop
+from shop import MainShop
 from enemy import Enemy
 from tower import Tower, ArcherTower
 
@@ -23,7 +23,7 @@ class Level:
         item_names = ['archers lvl 1', 'archers lvl 2', 'increase damage', 'increase range']
 
         # creating the menu with each item
-        self.shop = MainShop('right', item_names=item_names, buy_item=self.buy_item)
+        self.shop = MainShop('right', item_names=item_names, buy_item=self.buy_tower)
 
         # Enemy list
         self.enemies = []
@@ -35,21 +35,49 @@ class Level:
         self.towers = []
         self.tower_selected = None
 
+        # Money :
+        self.money_font = pygame.font.SysFont("arial", 50)
+        self.star_image = pygame.image.load("assets/shop/star.png").convert_alpha()
+        self.star_image = pygame.transform.scale_by(self.star_image, 2)
+        self.money = 10000
+
     def spawn_enemy(self):
 
         self.enemies.append(Enemy())
 
-    def buy_item(self, pos, name):
+    def draw_money(self, surface):
 
-        if name[0:6] == 'archer':
-            tower = ArcherTower(pos[0], pos[1], name)
-            self.archer_towers.append(tower)
-            self.towers.append(tower)
+        text = self.money_font.render(str(self.money), 1, (255, 255, 255))
+        money = pygame.transform.scale(self.star_image, (50, 50))
+
+        start_x = WINDOW_WIDTH - self.star_image.get_width() - 10
+        y = 75
+
+        surface.blit(text, (start_x - text.get_width() - 10, y))
+        surface.blit(money, (start_x, y))
+
+    def check_money(self, cost):
+
+        if cost <= self.money:
+            self.money -= cost
+            return True
         else:
-            tower = Tower(pos[0], pos[1], name)
-            self.support_towers.append(tower)
-            self.towers.append(tower)
-        self.tower_selected = tower
+            return False
+
+    def buy_tower(self, pos, name, cost):
+
+        if cost <= self.money:
+            self.money -= cost
+
+            if name[0:6] == 'archer':
+                tower = ArcherTower(pos[0], pos[1], name, self.check_money)
+                self.archer_towers.append(tower)
+                self.towers.append(tower)
+            else:
+                tower = Tower(pos[0], pos[1], name, self.check_money)
+                self.support_towers.append(tower)
+                self.towers.append(tower)
+            self.tower_selected = tower
 
     def run(self, events, dt):
 
@@ -98,6 +126,9 @@ class Level:
 
         # Shop
         self.shop.draw(self.screen)
+
+        # UI:
+        self.draw_money(self.screen)
 
         # Updating screen
         pygame.display.flip()

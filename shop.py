@@ -98,4 +98,4 @@ class MainShop(VerticalShop):
             if button.on_mouse_clicked(shop_pos):
                 # button clicked
                 if button.on_click:
-                    button.on_click(event_pos, item.name)
+                    button.on_click(event_pos, item.name, item.cost)

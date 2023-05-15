@@ -10,11 +10,11 @@ class Button:
         self.image = image
         self.rect = self.image.get_rect(x=pos[0], y=pos[1])
 
-    def draw(self, surface, pos=(0,0)):
+    def draw(self, surface, pos=(0, 0)):
         # draws the button
         x = pos[0] + self.rect.x
         y = pos[1] + self.rect.y
-        surface.blit(self.image, (x,y))
+        surface.blit(self.image, (x, y))
 
     def on_mouse_clicked(self, event_pos):
         # returns true if button clicked
@@ -75,7 +75,7 @@ class Item:
         self.button = Button(image, (btn_x, pos[1]), on_click)
 
         self.font = pygame.font.SysFont("arial", 20)
-        self.text_image = self.font.render(str(self.cost), False, (255, 255, 255)).convert_alpha()
+        self.text_image = self.font.render(str(self.cost), 1, (255, 255, 255)).convert_alpha()
 
         self.star_image = pygame.image.load("assets/shop/star.png").convert_alpha()
         self.star_image = pygame.transform.scale_by(self.star_image,
@@ -96,11 +96,10 @@ class Item:
 
     def change_cost(self, new_cost):
         self.cost = new_cost
-        self.text_image = self.font.render(str(new_cost), True, (255, 255, 255)).convert_alpha()
+        self.text_image = self.font.render(str(new_cost), 1, (255, 255, 255)).convert_alpha()
         self.text_pos = (self.star_pos[0] + self.star_image.get_width() + 5, self.y + self.image.get_height())
 
     def draw(self, surface, pos):
-
         self.button.draw(surface, pos)
-        surface.blit(self.star_image, (pos[0]+self.star_pos[0], pos[1]+self.star_pos[1]))
-        surface.blit(self.text_image, (pos[0]+self.text_pos[0], pos[1]+self.text_pos[1]))
+        surface.blit(self.star_image, (pos[0] + self.star_pos[0], pos[1] + self.star_pos[1]))
+        surface.blit(self.text_image, (pos[0] + self.text_pos[0], pos[1] + self.text_pos[1]))

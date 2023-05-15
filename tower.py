@@ -9,7 +9,10 @@ import os
 
 class Tower:
 
-    def __init__(self, centerx, centery, name, level=0):
+    def __init__(self, centerx, centery, name, buy_function, level=0):
+
+        self.check_money = buy_function
+
         # tower data
         self.name = name
         self.data = items_data[self.name]
@@ -40,10 +43,12 @@ class Tower:
     def upgrade(self):
 
         if self.level < self.max_level:
-            self.level += 1
-            if self.level != self.max_level:
-                new_cost = self.upgrade_cost[self.level]
-                self.upgrade_menu.items[0].change_cost(new_cost)
+            cost = self.upgrade_cost[self.level]
+            if self.check_money(cost):
+                self.level += 1
+                if self.level != self.max_level:
+                    new_cost = self.upgrade_cost[self.level]
+                    self.upgrade_menu.items[0].change_cost(new_cost)
         self.image = self.images[self.level]
         self.selected = False
 
@@ -82,8 +87,8 @@ class Tower:
 
 class ArcherTower(Tower):
 
-    def __init__(self, centerx, centery, name, level=0):
-        super().__init__(centerx, centery, name, level=level)
+    def __init__(self, centerx, centery, name, buy_function, level=0):
+        super().__init__(centerx, centery, name, buy_function, level=level)
 
         path = 'assets/towers/archer_top'
         self.animations = import_animations(path)
