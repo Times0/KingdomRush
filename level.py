@@ -3,7 +3,8 @@ import sys
 import os
 from constants import *
 from shop import MainShop
-from enemy import Ogre
+from enemy import Enemy, Ogre
+from data import waves, wave_enemies
 from tower import Tower, ArcherTower
 
 
@@ -25,8 +26,13 @@ class Level:
         # creating the menu with each item
         self.shop = MainShop('right', item_names=item_names, buy_item=self.buy_tower)
 
-        # Enemy list
+        # Enemies
         self.enemies = []
+        self.wave_count = 0
+        self.current_wave = None
+        self.SPAWN_ENEMY = pygame.event.custom_type()
+        self.time_between_enemies = 2000
+        self.last_enemy_time = -self.time_between_enemies
 
         # Towers list
         self.archer_towers = []
@@ -40,9 +46,31 @@ class Level:
         self.star_image = pygame.transform.scale_by(self.star_image, 2)
         self.money = 10000
 
-    def spawn_enemy(self, enemy):
+    def start_next_wave(self):
+        self.current_wave = waves[self.wave_count]
 
+    def spawn_enemy(self, enemy_type='ogre'):
+
+        if enemy_type == 'ogre':
+            enemy = Ogre()
+        else:
+            enemy = Enemy()
         self.enemies.append(enemy)
+
+    def spawn_next_enemy(self):
+
+        if sum(self.current_wave) == 0:
+            if len(self.enemies) == 0:
+                self.wave_count += 1
+                self.current_wave = None
+        else:
+            for enemy_index, nb_enemy in enumerate(self.current_wave):
+                if nb_enemy != 0:
+                    enemy_type = wave_enemies[enemy_index]
+                    self.spawn_enemy(enemy_type)
+                    self.last_enemy_time = pygame.time.get_ticks()
+                    self.current_wave[enemy_index] -= 1
+                    break
 
     def draw_money(self, surface):
 
@@ -96,7 +124,7 @@ class Level:
 
                 # spawn enemy with space key
                 if event.key == pygame.K_SPACE:
-                    self.spawn_enemy(Ogre())
+                    self.start_next_wave()
 
             elif event.type == pygame.MOUSEMOTION:
                 if self.tower_selected is not None:
@@ -112,6 +140,11 @@ class Level:
 
                 self.shop.update(event.pos)
 
+        # Spawning enemies:
+        if self.current_wave is not None:
+            if pygame.time.get_ticks() - self.last_enemy_time > self.time_between_enemies:
+                self.spawn_next_enemy()
+
         # Background
         self.screen.blit(self.background, (0, 0))
 
@@ -125,11 +158,15 @@ class Level:
             tower.draw(self.screen)
 
         # Enemies
-        for enemy in self.enemies:
+        for index, enemy in enumerate(self.enemies):
             enemy.update(dt)
             if enemy.dead:
+                if index + 1 < len(self.enemies):
+                    self.enemies[index + 1].update(dt)
+                    self.enemies[index + 1].draw(self.screen)
                 self.enemies.remove(enemy)
                 self.money += enemy.money
+
             else:
                 enemy.draw(self.screen)
 

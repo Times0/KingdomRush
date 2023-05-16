@@ -12,6 +12,7 @@ class Enemy:
         self.dead = False
 
         # movement
+        self.center = center
         self.speed = 100
         self.direction = pygame.math.Vector2(0, 0)
         self.path = [(-100, 349), (0, 349), (281, 358), (388, 427), (842, 440), (943, 402), (992, 287), (1033, 145),
@@ -20,7 +21,6 @@ class Enemy:
         self.path_pos = 0
         self.x = self.path[self.path_pos][0]
         self.y = self.path[self.path_pos][1]
-        self.center = center
 
         # animations
         self.animations = animations
@@ -135,7 +135,7 @@ class Enemy:
 class Ogre(Enemy):
 
     def __init__(self):
-        self.health = 1
+        self.health = 3
         self.money = 100
         self.animations = ogre_animations
 

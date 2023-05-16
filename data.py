@@ -7,3 +7,23 @@ towers_data = {
     'increase damage': ['buy_damage.png', 1000, tower_imgs[2], [2000]],
     'increase range': ['buy_range.png', 1500, tower_imgs[3], [3000]],
 }
+
+# waves are in form
+# number of enemy
+# (# ogre, # tbd, # tbd, # tbd)
+wave_enemies = ['ogre']
+waves = [
+    [3],
+    [50],
+    [100],
+    [0, 20],
+    [0, 50, 0, 1],
+    [0, 100, 0],
+    [20, 100, 0],
+    [50, 100, 0],
+    [100, 100, 0],
+    [0, 0, 50, 3],
+    [20, 0, 100],
+    [20, 0, 150],
+    [200, 100, 200],
+]
