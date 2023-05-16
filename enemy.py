@@ -8,8 +8,10 @@ class Enemy:
     def __init__(self, folder_path='assets/enemies/enemy_1', center=(130, 279)):
 
         # attributes
-        self.max_health = 0
-        self.health = 1
+        self.max_health = 3
+        self.health = self.max_health
+        self.money = 100
+        self.dead = False
 
         # movement
         self.speed = 100
@@ -38,6 +40,9 @@ class Enemy:
         # animation loop
         self.frame_index += self.animation_speed * dt
         if self.frame_index >= len(current_animation):
+            # go back to the first frame of the animation
+            if self.status == 'die':
+                self.dead = True
             self.frame_index = 0
 
         # get the current animation frame
@@ -98,7 +103,23 @@ class Enemy:
 
         self.direction = dirn
 
+    def hit(self, damage):
+
+        self.health -= damage
+        if self.health <= 0:
+            self.status = 'die'
+            self.frame_index = 0
+
+    def check_death(self):
+
+        if self.health <= 0:
+            self.status = 'die'
+            return True
+        else:
+            return False
+
     def draw(self, surface):
+
         if self.facing_right:
             x_offset = self.center[0]
         else:
@@ -108,6 +129,7 @@ class Enemy:
         surface.blit(self.image, (self.x - x_offset, self.y - y_offset))
 
     def update(self, dt):
-        self.check_point_reached()
-        self.move(dt)
+        if self.status != 'die':
+            self.check_point_reached()
+            self.move(dt)
         self.animate(dt)

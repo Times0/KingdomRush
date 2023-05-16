@@ -75,6 +75,16 @@ class Tower:
         else:
             self.selected = False
 
+    def collide(self, otherTower):
+        x2 = otherTower.x
+        y2 = otherTower.y
+
+        dis = math.sqrt((x2 - self.x) ** 2 + (y2 - self.y) ** 2)
+        if dis >= 100:
+            return False
+        else:
+            return True
+
     def place(self, pos):
         self.placed = True
         self.centerx = pos[0]
@@ -101,6 +111,9 @@ class ArcherTower(Tower):
         self.archer_x = self.x + 50
         self.archer_y = self.y - 15
 
+        self.range = 400
+        self.damage = 1
+
     def animate(self, dt):
 
         current_animation = self.animations[self.status]
@@ -111,6 +124,7 @@ class ArcherTower(Tower):
             self.frame_index += self.animation_speed * dt
             if self.frame_index >= len(current_animation):
                 self.frame_index = 0
+                self.shooting = False
 
             # get the current animation frame
             image = current_animation[math.floor(self.frame_index)]
@@ -132,6 +146,36 @@ class ArcherTower(Tower):
 
         if self.selected:
             self.upgrade_menu.draw(surface)
+
+    def attack(self, enemies):
+        """
+        attacks an enemy in the enemy list
+        """
+
+        enemy_closest = []
+        for enemy in enemies:
+
+            if enemy.status != 'die':
+                x = enemy.x
+                y = enemy.y
+
+                dis = math.sqrt(
+                    (self.x - x) ** 2 + (self.y - y) ** 2)
+                if dis < self.range:
+                    enemy_closest.append(enemy)
+
+        enemy_closest.sort(key=lambda x: x.path_pos)
+        enemy_closest = enemy_closest[::-1]
+        if len(enemy_closest) > 0:
+            first_enemy = enemy_closest[0]
+            if not self.shooting:
+                self.shooting = True
+                first_enemy.hit(self.damage)
+
+            if first_enemy.x > self.x and not self.facing_right:
+                self.facing_right = True
+            elif self.facing_right and first_enemy.x < self.x:
+                self.facing_right = False
 
     def update_pos(self, pos):
 

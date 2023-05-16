@@ -27,7 +27,6 @@ class Level:
 
         # Enemy list
         self.enemies = []
-        self.spawn_enemy()
 
         # Towers list
         self.archer_towers = []
@@ -41,9 +40,9 @@ class Level:
         self.star_image = pygame.transform.scale_by(self.star_image, 2)
         self.money = 10000
 
-    def spawn_enemy(self):
+    def spawn_enemy(self, enemy):
 
-        self.enemies.append(Enemy())
+        self.enemies.append(enemy)
 
     def draw_money(self, surface):
 
@@ -95,6 +94,10 @@ class Level:
                 if event.key == pygame.K_ESCAPE:
                     self.show_menu()
 
+                # spawn enemy with space key
+                if event.key == pygame.K_SPACE:
+                    self.spawn_enemy(Enemy())
+
             elif event.type == pygame.MOUSEMOTION:
                 if self.tower_selected is not None:
                     self.tower_selected.update_pos(event.pos)
@@ -116,13 +119,19 @@ class Level:
         for tower in self.support_towers:
             tower.draw(self.screen)
         for tower in self.archer_towers:
-            tower.animate(dt)
+            if tower.placed:
+                tower.attack(self.enemies)
+                tower.animate(dt)
             tower.draw(self.screen)
 
         # Enemies
         for enemy in self.enemies:
             enemy.update(dt)
-            enemy.draw(self.screen)
+            if enemy.dead:
+                self.enemies.remove(enemy)
+                self.money += enemy.money
+            else:
+                enemy.draw(self.screen)
 
         # Shop
         self.shop.draw(self.screen)
