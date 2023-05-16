@@ -1,5 +1,5 @@
-from load_assets import import_folder, import_animations
-from data import items_data
+from assets import archer_animations
+from data import towers_data
 import math
 import pygame
 from shop import VerticalShop
@@ -15,7 +15,7 @@ class Tower:
 
         # tower data
         self.name = name
-        self.data = items_data[self.name]
+        self.data = towers_data[self.name]
         self.upgrade_cost = self.data[3]
         self.max_level = len(self.upgrade_cost)
         self.level = level
@@ -25,8 +25,7 @@ class Tower:
         # size and pos
         self.centerx = centerx
         self.centery = centery
-        folder_path = self.data[2]
-        self.images = import_folder(folder_path)
+        self.images = self.data[2]
         self.image = self.images[self.level]
         self.width = self.image.get_width()
         self.height = self.image.get_height()
@@ -54,7 +53,7 @@ class Tower:
 
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y))
-        if self.selected:
+        if self.selected and self.level != self.max_level:
             self.upgrade_menu.draw(surface)
 
     def update_pos(self, pos):
@@ -75,9 +74,9 @@ class Tower:
         else:
             self.selected = False
 
-    def collide(self, otherTower):
-        x2 = otherTower.x
-        y2 = otherTower.y
+    def collide(self, other_tower):
+        x2 = other_tower.x
+        y2 = other_tower.y
 
         dis = math.sqrt((x2 - self.x) ** 2 + (y2 - self.y) ** 2)
         if dis >= 100:
@@ -100,8 +99,7 @@ class ArcherTower(Tower):
     def __init__(self, centerx, centery, name, buy_function, level=0):
         super().__init__(centerx, centery, name, buy_function, level=level)
 
-        path = 'assets/towers/archer_top'
-        self.animations = import_animations(path)
+        self.animations = archer_animations
         self.status = 'front'
         self.archer_image = self.animations[self.status][0]
         self.frame_index = 0
@@ -144,15 +142,18 @@ class ArcherTower(Tower):
         surface.blit(self.image, (self.x, self.y))
         surface.blit(self.archer_image, (self.archer_x, self.archer_y))
 
-        if self.selected:
+        if self.selected and self.level != self.max_level:
             self.upgrade_menu.draw(surface)
 
     def attack(self, enemies):
         """
-        attacks an enemy in the enemy list
+        attacks the closest enemy
+        updates the archers facing direction based on the enemy location
         """
 
-        enemy_closest = []
+        # Finding the closest enemy to the tower
+        closest_enemy = None
+        closest_enemy_dis = self.range
         for enemy in enemies:
 
             if enemy.status != 'die':
@@ -161,20 +162,22 @@ class ArcherTower(Tower):
 
                 dis = math.sqrt(
                     (self.x - x) ** 2 + (self.y - y) ** 2)
-                if dis < self.range:
-                    enemy_closest.append(enemy)
 
-        enemy_closest.sort(key=lambda x: x.path_pos)
-        enemy_closest = enemy_closest[::-1]
-        if len(enemy_closest) > 0:
-            first_enemy = enemy_closest[0]
+                if dis < self.range and dis < closest_enemy_dis:
+                    closest_enemy = enemy
+                    closest_enemy_dis = dis
+
+        if closest_enemy is not None:
+
+            # Attacking the closest enemy
             if not self.shooting:
                 self.shooting = True
-                first_enemy.hit(self.damage)
+                closest_enemy.hit(self.damage)
 
-            if first_enemy.x > self.x and not self.facing_right:
+            # Changing the archers direction depending on the enemy position relative to the tower
+            if closest_enemy.x > self.x and not self.facing_right:
                 self.facing_right = True
-            elif self.facing_right and first_enemy.x < self.x:
+            elif self.facing_right and closest_enemy.x < self.x:
                 self.facing_right = False
 
     def update_pos(self, pos):

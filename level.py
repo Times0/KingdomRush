@@ -3,7 +3,7 @@ import sys
 import os
 from constants import *
 from shop import MainShop
-from enemy import Enemy
+from enemy import Ogre
 from tower import Tower, ArcherTower
 
 
@@ -96,7 +96,7 @@ class Level:
 
                 # spawn enemy with space key
                 if event.key == pygame.K_SPACE:
-                    self.spawn_enemy(Enemy())
+                    self.spawn_enemy(Ogre())
 
             elif event.type == pygame.MOUSEMOTION:
                 if self.tower_selected is not None:

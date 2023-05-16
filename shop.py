@@ -2,7 +2,7 @@ import pygame
 from buttons import Item
 import os
 from constants import *
-from data import items_data
+from data import towers_data
 
 
 class VerticalShop:
@@ -80,8 +80,8 @@ class MainShop(VerticalShop):
 
     def create_item(self, name, btn_x, btn_y):
 
-        data = items_data[name]
-        image = pygame.image.load(os.path.join(items_data['path'], data[0])).convert_alpha()
+        data = towers_data[name]
+        image = pygame.image.load(os.path.join(towers_data['path'], data[0])).convert_alpha()
         image = pygame.transform.scale_by(image, .5)
         cost = data[1]
         on_click = self.buy_item

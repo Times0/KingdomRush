@@ -1,16 +1,14 @@
 import pygame
-import os
-from load_assets import import_animations
+from assets import ogre_animations
 import math
 
 
 class Enemy:
-    def __init__(self, folder_path='assets/enemies/enemy_1', center=(130, 279)):
+    def __init__(self, animations=ogre_animations, center=(130, 279), health=3, money=100):
 
         # attributes
-        self.max_health = 3
-        self.health = self.max_health
-        self.money = 100
+        self.health = health
+        self.money = money
         self.dead = False
 
         # movement
@@ -25,8 +23,7 @@ class Enemy:
         self.center = center
 
         # animations
-        self.folder_path = folder_path
-        self.animations = import_animations(os.path.join(self.folder_path))
+        self.animations = animations
         self.status = 'run'
         self.frame_index = 0
         self.image = self.animations[self.status][self.frame_index]
@@ -50,7 +47,7 @@ class Enemy:
 
         # flipping the image if needed
         if not self.facing_right:
-            image = pygame.transform.flip(image, True, False).convert_alpha()
+            image = pygame.transform.flip(image, True, False)
 
         self.image = image
 
@@ -133,3 +130,13 @@ class Enemy:
             self.check_point_reached()
             self.move(dt)
         self.animate(dt)
+
+
+class Ogre(Enemy):
+
+    def __init__(self):
+        self.health = 1
+        self.money = 100
+        self.animations = ogre_animations
+
+        super().__init__(animations=self.animations, center=(130, 279), health=self.health, money=self.money)
