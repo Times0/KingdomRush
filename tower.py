@@ -149,8 +149,8 @@ class ArcherTower(Tower):
 
         if draw_range and not self.placed:
             surf = pygame.Surface((self.range * 2, self.range * 2), pygame.SRCALPHA, 32)
-            pygame.draw.circle(surf, (220, 220, 220, 50), (self.range, self.range), self.range)
-            pygame.draw.circle(surf, (220, 220, 220), (self.range, self.range), self.range, 2)
+            pygame.draw.circle(surf, (*COLOR_TURRET_RANGE, 100), (self.range, self.range), self.range)
+            pygame.draw.circle(surf, COLOR_TURRET_RANGE_CONTOUR, (self.range, self.range), self.range, 2)
             surface.blit(surf, (self.centerx - self.range, self.centery - self.range))
 
     def attack(self, enemies):
@@ -196,3 +196,7 @@ class ArcherTower(Tower):
         self.y = self.centery - self.height / 2
         self.archer_x = self.x + 50
         self.archer_y = self.y - 15
+
+
+COLOR_TURRET_RANGE = (123, 162, 115)
+COLOR_TURRET_RANGE_CONTOUR = (53, 73, 48)
