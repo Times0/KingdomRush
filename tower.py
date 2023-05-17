@@ -1,10 +1,12 @@
-from assets import archer_animations
-from data import towers_data
 import math
-import pygame
-from shop import VerticalShop
-from buttons import Item
 import os
+
+import pygame
+
+from assets import archer_animations
+from buttons import Item
+from data import towers_data
+from shop import VerticalShop
 
 
 class Tower:
@@ -51,7 +53,7 @@ class Tower:
         self.image = self.images[self.level]
         self.selected = False
 
-    def draw(self, surface):
+    def draw(self, surface, draw_range=False):
         surface.blit(self.image, (self.x, self.y))
         if self.selected and self.level != self.max_level:
             self.upgrade_menu.draw(surface)
@@ -137,13 +139,19 @@ class ArcherTower(Tower):
 
         self.archer_image = image
 
-    def draw(self, surface):
+    def draw(self, surface, draw_range=True):
 
         surface.blit(self.image, (self.x, self.y))
         surface.blit(self.archer_image, (self.archer_x, self.archer_y))
 
         if self.selected and self.level != self.max_level:
             self.upgrade_menu.draw(surface)
+
+        if draw_range and not self.placed:
+            surf = pygame.Surface((self.range * 2, self.range * 2), pygame.SRCALPHA, 32)
+            pygame.draw.circle(surf, (220, 220, 220, 50), (self.range, self.range), self.range)
+            pygame.draw.circle(surf, (220, 220, 220), (self.range, self.range), self.range, 2)
+            surface.blit(surf, (self.centerx - self.range, self.centery - self.range))
 
     def attack(self, enemies):
         """
