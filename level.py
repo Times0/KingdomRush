@@ -6,6 +6,8 @@ from shop import MainShop
 from enemy import Enemy, Ogre
 from data import waves, wave_enemies
 from tower import Tower, ArcherTower
+from buttons import ToggleButton
+from assets import pause_img, start_img, sound_on, sound_off
 
 
 class Level:
@@ -14,6 +16,9 @@ class Level:
 
         self.screen = pygame.display.get_surface()
         self.show_menu = show_menu
+
+        self.paused = False
+        self.pause_time = 0
 
         # Import background image
         bg_path = 'assets/level/bg.png'
@@ -46,8 +51,39 @@ class Level:
         self.star_image = pygame.transform.scale_by(self.star_image, 2)
         self.money = 10000
 
+        # UI:
+        self.buttons = []
+        # Play/pause button:
+        offset = 10
+        x = offset
+        y = WINDOW_HEIGHT - pause_img.get_height() - offset
+        self.pause_btn = ToggleButton([start_img, pause_img], (x, y), [self.unpause, self.pause])
+        self.buttons.append(self.pause_btn)
+
+        # Sound On/off button:
+        offset = 10
+        x = offset + start_img.get_width() + offset
+        y = WINDOW_HEIGHT - pause_img.get_height() - offset
+        self.music_btn = ToggleButton([sound_on, sound_off], (x, y),
+                                      [pygame.mixer.music.pause, pygame.mixer.music.unpause])
+        self.buttons.append(self.music_btn)
+
     def start_next_wave(self):
+
         self.current_wave = waves[self.wave_count]
+
+    def pause(self):
+
+        self.paused = True
+        self.pause_time = pygame.time.get_ticks()
+
+    def unpause(self):
+        if self.current_wave is None:
+            self.start_next_wave()
+        else:
+            if self.paused:
+                self.last_enemy_time = pygame.time.get_ticks() - self.pause_time + self.last_enemy_time
+        self.paused = False
 
     def spawn_enemy(self, enemy_type='ogre'):
 
@@ -63,6 +99,8 @@ class Level:
             if len(self.enemies) == 0:
                 self.wave_count += 1
                 self.current_wave = None
+                self.paused = True
+                self.pause_btn.toggle()
         else:
             for enemy_index, nb_enemy in enumerate(self.current_wave):
                 if nb_enemy != 0:
@@ -122,15 +160,18 @@ class Level:
                 if event.key == pygame.K_ESCAPE:
                     self.show_menu()
 
-                # spawn enemy with space key
-                if event.key == pygame.K_SPACE:
-                    self.start_next_wave()
-
             elif event.type == pygame.MOUSEMOTION:
                 if self.tower_selected is not None:
                     self.tower_selected.update_pos(event.pos)
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
+
+                for button in self.buttons:
+                    if button.on_mouse_clicked(event.pos):
+                        # button clicked
+                        if button.on_click:
+                            button.on_click()
+
                 if self.tower_selected is not None:
                     self.tower_selected.place(event.pos)
                     self.tower_selected = None
@@ -142,8 +183,9 @@ class Level:
 
         # Spawning enemies:
         if self.current_wave is not None:
-            if pygame.time.get_ticks() - self.last_enemy_time > self.time_between_enemies:
-                self.spawn_next_enemy()
+            if not self.paused:
+                if pygame.time.get_ticks() - self.last_enemy_time > self.time_between_enemies:
+                    self.spawn_next_enemy()
 
         # Background
         self.screen.blit(self.background, (0, 0))
@@ -153,16 +195,19 @@ class Level:
             tower.draw(self.screen)
         for tower in self.archer_towers:
             if tower.placed:
-                tower.attack(self.enemies)
-                tower.animate(dt)
+                if not self.paused:
+                    tower.attack(self.enemies)
+                    tower.animate(dt)
             tower.draw(self.screen)
 
         # Enemies
         for index, enemy in enumerate(self.enemies):
-            enemy.update(dt)
+            if not self.paused:
+                enemy.update(dt)
             if enemy.dead:
                 if index + 1 < len(self.enemies):
-                    self.enemies[index + 1].update(dt)
+                    if not self.paused:
+                        self.enemies[index + 1].update(dt)
                     self.enemies[index + 1].draw(self.screen)
                 self.enemies.remove(enemy)
                 self.money += enemy.money
@@ -175,6 +220,8 @@ class Level:
 
         # UI:
         self.draw_money(self.screen)
+        for button in self.buttons:
+            button.draw(self.screen)
 
         # Updating screen
         pygame.display.flip()

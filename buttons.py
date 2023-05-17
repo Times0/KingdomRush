@@ -32,21 +32,34 @@ class Button:
 
 class ToggleButton(Button):
 
-    def __init__(self, images: list, pos: tuple, on_click=None):
+    def __init__(self, images: list, pos: tuple, on_click_actions=None):
+
+        if on_click_actions is None:
+            self.on_click_actions = []
+            self.on_click = None
+        else:
+            self.on_click_actions = on_click_actions
+            self.on_click = on_click_actions[0]
 
         first_image = images[0]
-        super().__init__(first_image, pos, on_click)
+
+        super().__init__(first_image, pos, on_click=self.on_click)
 
         self.images = images
         self.image_index = 0
         self.image = images[self.image_index]
+        if len(self.on_click_actions) > 0:
+            self.on_click = self.on_click_actions[self.image_index]
 
     def on_mouse_clicked(self, event_pos):
         # returns true if button clicked
 
+        if len(self.on_click_actions) > 0:
+            self.on_click = self.on_click_actions[self.image_index]
         if self.rect.collidepoint(event_pos):
             self.change_image()
             return True
+
         else:
             return False
 
@@ -57,6 +70,12 @@ class ToggleButton(Button):
         if self.image_index >= len(self.images):
             self.image_index = 0
         self.image = self.images[self.image_index]
+
+    def toggle(self):
+
+        self.change_image()
+        if len(self.on_click_actions) > 0:
+            self.on_click = self.on_click_actions[self.image_index]
 
 
 class Item:

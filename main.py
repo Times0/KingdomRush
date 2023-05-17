@@ -2,11 +2,17 @@ if __name__ == '__main__':
 
     import pygame
     import sys
+    import os
 
     from game import Game
     from constants import *
 
     pygame.init()
+
+    # Music
+    pygame.mixer.init()
+    pygame.mixer.music.load(os.path.join('assets', 'level\\music.mp3'))
+    pygame.mixer.music.set_volume(VOLUME)
 
     #   Creating the game window :
     pygame.display.set_caption('KingdomRush')
@@ -20,9 +26,8 @@ if __name__ == '__main__':
     # Main game loop
     running = True
     while running:
-
         # FPS
-        dt = clock.tick(FPS)/1000
+        dt = clock.tick(FPS) / 1000
 
         # get events
         events = pygame.event.get()

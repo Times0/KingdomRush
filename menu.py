@@ -3,6 +3,7 @@ import sys
 from constants import *
 import os
 from buttons import Button, ToggleButton
+from assets import sound_on, sound_off
 
 
 class MainMenu:
@@ -41,10 +42,8 @@ class MainMenu:
         self.buttons.append(self.settings_btn)
 
         # Sound button :
-        sound_on_path = 'assets/main_menu/button_sound.png'
-        sound_on_image = pygame.image.load(os.path.join(sound_on_path)).convert_alpha()
-        sound_off_path = 'assets/main_menu/button_sound_off.png'
-        sound_off_image = pygame.image.load(os.path.join(sound_off_path)).convert_alpha()
+        sound_on_image = sound_on
+        sound_off_image = sound_off
         offset = 10
         btn_x = offset
         btn_y = offset
