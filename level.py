@@ -1,10 +1,12 @@
-import pygame
-import sys
 import os
+import sys
+
+import pygame
+
 from constants import *
+from data import waves, wave_enemies
 from shop import MainShop
 from enemy import Enemy, Ogre
-from data import waves, wave_enemies
 from tower import Tower, ArcherTower
 from buttons import ToggleButton
 from assets import pause_img, start_img, sound_on, sound_off
@@ -68,6 +70,8 @@ class Level:
                                       [pygame.mixer.music.pause, pygame.mixer.music.unpause])
         self.buttons.append(self.music_btn)
 
+        self.path_debug = []
+
     def start_next_wave(self):
 
         self.current_wave = waves[self.wave_count]
@@ -112,7 +116,7 @@ class Level:
 
     def draw_money(self, surface):
 
-        text = self.money_font.render(str(self.money), 1, (255, 255, 255))
+        text = self.money_font.render(str(self.money), True, (255, 255, 255))
         money = pygame.transform.scale(self.star_image, (50, 50))
 
         start_x = WINDOW_WIDTH - self.star_image.get_width() - 10
@@ -160,11 +164,17 @@ class Level:
                 if event.key == pygame.K_ESCAPE:
                     self.show_menu()
 
+                # spawn enemy with space key
+                if event.key == pygame.K_SPACE:
+                    self.start_next_wave()
+
             elif event.type == pygame.MOUSEMOTION:
                 if self.tower_selected is not None:
                     self.tower_selected.update_pos(event.pos)
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.path_debug.append(event.pos)
+                # print(self.path_debug)
 
                 for button in self.buttons:
                     if button.on_mouse_clicked(event.pos):

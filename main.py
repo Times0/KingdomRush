@@ -1,12 +1,12 @@
-if __name__ == '__main__':
+import sys
+import os
+import pygame
 
-    import pygame
-    import sys
-    import os
+from constants import *
+from game import Game
 
-    from game import Game
-    from constants import *
 
+def main():
     pygame.init()
 
     # Music
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     running = True
     while running:
         # FPS
-        dt = clock.tick(FPS) / 1000
+        dt = clock.tick(FPS) / 1000  # delta time in seconds
 
         # get events
         events = pygame.event.get()
@@ -38,3 +38,7 @@ if __name__ == '__main__':
     # closing the game
     pygame.quit()
     sys.exit()
+
+
+if __name__ == '__main__':
+    main()
