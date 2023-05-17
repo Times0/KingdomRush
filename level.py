@@ -1,10 +1,12 @@
-import pygame
-import sys
 import os
+import sys
+
+import pygame
+
 from constants import *
-from shop import MainShop
-from enemy import Enemy, Ogre
 from data import waves, wave_enemies
+from enemy import Enemy, Ogre
+from shop import MainShop
 from tower import Tower, ArcherTower
 
 
@@ -46,11 +48,12 @@ class Level:
         self.star_image = pygame.transform.scale_by(self.star_image, 2)
         self.money = 10000
 
+        self.path_debug = []
+
     def start_next_wave(self):
         self.current_wave = waves[self.wave_count]
 
     def spawn_enemy(self, enemy_type='ogre'):
-
         if enemy_type == 'ogre':
             enemy = Ogre()
         else:
@@ -74,7 +77,7 @@ class Level:
 
     def draw_money(self, surface):
 
-        text = self.money_font.render(str(self.money), 1, (255, 255, 255))
+        text = self.money_font.render(str(self.money), True, (255, 255, 255))
         money = pygame.transform.scale(self.star_image, (50, 50))
 
         start_x = WINDOW_WIDTH - self.star_image.get_width() - 10
@@ -120,6 +123,7 @@ class Level:
 
                 # return to menu with escape key
                 if event.key == pygame.K_ESCAPE:
+                    self.tower_selected = None
                     self.show_menu()
 
                 # spawn enemy with space key
@@ -131,6 +135,8 @@ class Level:
                     self.tower_selected.update_pos(event.pos)
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.path_debug.append(event.pos)
+                # print(self.path_debug)
                 if self.tower_selected is not None:
                     self.tower_selected.place(event.pos)
                     self.tower_selected = None

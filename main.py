@@ -1,15 +1,16 @@
-if __name__ == '__main__':
+import sys
 
-    import pygame
-    import sys
+import pygame
 
-    from game import Game
-    from constants import *
+from constants import *
+from game import Game
 
+
+def main():
     pygame.init()
 
     #   Creating the game window :
-    pygame.display.set_caption('KingdomRush')
+    pygame.display.set_caption('Monster TD')
     display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.FULLSCREEN)
 
     # fps
@@ -20,9 +21,8 @@ if __name__ == '__main__':
     # Main game loop
     running = True
     while running:
-
         # FPS
-        dt = clock.tick(FPS)/1000
+        dt = clock.tick(FPS) / 1000  # delta time in seconds
 
         # get events
         events = pygame.event.get()
@@ -33,3 +33,7 @@ if __name__ == '__main__':
     # closing the game
     pygame.quit()
     sys.exit()
+
+
+if __name__ == '__main__':
+    main()

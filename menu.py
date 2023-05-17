@@ -1,8 +1,10 @@
-import pygame
-import sys
-from constants import *
 import os
+import sys
+
+import pygame
+
 from buttons import Button, ToggleButton
+from constants import *
 
 
 class MainMenu:
@@ -30,15 +32,15 @@ class MainMenu:
         self.buttons.append(self.start_btn)
 
         # Settings button :
-        btn_path = 'assets/main_menu/button_settings.png'
+        btn_path = 'assets/main_menu/button_close.png'
         btn_image = pygame.image.load(os.path.join(btn_path)).convert_alpha()
         btn_width = btn_image.get_width()
         offset = 10
         btn_x = WINDOW_WIDTH - btn_width - offset
         btn_y = offset
 
-        self.settings_btn = Button(btn_image, (btn_x, btn_y))
-        self.buttons.append(self.settings_btn)
+        self.close_btn = Button(btn_image, (btn_x, btn_y), on_click=exit)
+        self.buttons.append(self.close_btn)
 
         # Sound button :
         sound_on_path = 'assets/main_menu/button_sound.png'
@@ -49,21 +51,17 @@ class MainMenu:
         btn_x = offset
         btn_y = offset
 
-        self.settings_btn = ToggleButton([sound_on_image, sound_off_image], (btn_x, btn_y))
-        self.buttons.append(self.settings_btn)
+        self.close_btn = ToggleButton([sound_on_image, sound_off_image], (btn_x, btn_y))
+        self.buttons.append(self.close_btn)
 
     def run(self, events):
-
         # event handler
         for event in events:
-
             # quitting game
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
             elif event.type == pygame.MOUSEBUTTONDOWN:
-
                 for button in self.buttons:
                     if button.on_mouse_clicked(event.pos):
                         # button clicked
@@ -71,9 +69,7 @@ class MainMenu:
                             button.on_click()
 
             elif event.type == pygame.MOUSEMOTION:
-
                 for button in self.buttons:
-
                     if button.on_mouse_motion(event.pos):
                         # button hovered
                         pass
