@@ -9,9 +9,9 @@ from assets import sound_on, sound_off
 
 
 class MainMenu:
-    def __init__(self, show_level):
+    def __init__(self, create_level):
         self.screen = pygame.display.get_surface()
-        self.show_level = show_level
+        self.create_level = create_level
 
         # Import background image
         bg_path = 'assets/main_menu/bg.png'
@@ -29,7 +29,7 @@ class MainMenu:
         btn_x = (WINDOW_WIDTH - btn_width) / 2
         btn_y = (WINDOW_HEIGHT - btn_height) / 2
 
-        self.start_btn = Button(btn_image, (btn_x, btn_y), on_click=self.show_level)
+        self.start_btn = Button(btn_image, (btn_x, btn_y), on_click=self.create_level)
         self.buttons.append(self.start_btn)
 
         # Close button :

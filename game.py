@@ -12,6 +12,7 @@ class Game:
         self.level = Level(self.show_menu)
 
     def create_level(self):
+        self.level = None
         self.level = Level(self.show_menu)
         self.show_level()
 

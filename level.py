@@ -4,7 +4,6 @@ import sys
 import pygame
 from data import items_data
 from constants import *
-from data import waves, wave_enemies
 from shop import MainShop
 from enemy import Enemy, Ogre, Scorpion, Wizard, ArmoredOgre, Pekka
 from tower import ArcherTowerLong, ArcherTowerShort, RangeTower, SpeedTower
@@ -53,7 +52,6 @@ class Level:
         self.heart_image = pygame.transform.scale(self.heart_image, (50, 50))
         self.health = 10
 
-
         # UI:
         self.buttons = []
         # Play/pause button:
@@ -73,6 +71,22 @@ class Level:
 
         # Enemies
         self.enemies = []
+        self.wave_enemies = ['scorpion', 'wizard', 'ogre', 'armored_ogre', 'pekka']
+        self.waves = [
+            [10],
+            [20],
+            [0, 10],
+            [0, 5, 10],
+            [0, 0, 20, 1],
+            [5, 0, 0, 10],
+            [0, 0, 0, 0, 5],
+            [50, 100],
+            [100, 100],
+            [0, 0, 50, 3],
+            [20, 0, 100],
+            [20, 0, 150],
+            [200, 100, 200],
+        ]
         self.wave_count = 0
         self.current_wave = None
         self.SPAWN_ENEMY = pygame.event.custom_type()
@@ -84,7 +98,7 @@ class Level:
 
     def start_next_wave(self):
 
-        self.current_wave = waves[self.wave_count]
+        self.current_wave = self.waves[self.wave_count]
 
     def pause(self):
 
@@ -131,7 +145,7 @@ class Level:
         else:
             for enemy_index, nb_enemy in enumerate(self.current_wave):
                 if nb_enemy != 0:
-                    enemy_type = wave_enemies[enemy_index]
+                    enemy_type = self.wave_enemies[enemy_index]
                     self.spawn_enemy(enemy_type)
                     self.last_enemy_time = pygame.time.get_ticks()
                     self.current_wave[enemy_index] -= 1
@@ -162,10 +176,10 @@ class Level:
         x = 10
         y = 10
 
-        text_img = self.wave_font.render('Wave #'+str(self.wave_count+1), True, (255, 255, 255))
+        text_img = self.wave_font.render('Wave #' + str(self.wave_count + 1), True, (255, 255, 255))
 
-        text_x = (self.wave_bg.get_width()-text_img.get_width())/2
-        text_y = (self.wave_bg.get_height()-text_img.get_height())/2
+        text_x = (self.wave_bg.get_width() - text_img.get_width()) / 2
+        text_y = (self.wave_bg.get_height() - text_img.get_height()) / 2
         surface.blit(self.wave_bg, (x, y))
         surface.blit(text_img, (x + text_x, y + text_y))
 
