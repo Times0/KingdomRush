@@ -4,9 +4,10 @@ import pygame
 
 from assets import ogre_animations
 
-ENNEMY_PATH = [(1898, 139), (782, 131), (668, 259), (682, 405), (787, 485), (1059, 481), (1208, 534), (1237, 681),
-               (1152, 807), (849, 823), (670, 823), (578, 771), (515, 772), (451, 816), (327, 784), (227, 740),
-               (0, 734)]
+ENEMY_PATH = [(2000, 139), (1898, 139), (782, 131), (668, 259), (682, 405), (787, 485), (1059, 481), (1208, 534),
+              (1237, 681),
+              (1152, 807), (849, 823), (670, 823), (578, 771), (515, 772), (451, 816), (327, 784), (227, 740),
+              (0, 734)]
 
 
 class Enemy:
@@ -21,7 +22,7 @@ class Enemy:
         self.center = center
         self.speed = 100
         self.direction = pygame.math.Vector2(0, 0)
-        self.path = ENNEMY_PATH
+        self.path = ENEMY_PATH
         self.path_pos = 0
         self.x = self.path[self.path_pos][0]
         self.y = self.path[self.path_pos][1]
@@ -139,7 +140,7 @@ class Enemy:
 class Ogre(Enemy):
 
     def __init__(self):
-        self.health = 3
+        self.health = 100
         self.money = 100
         self.animations = ogre_animations
 

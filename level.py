@@ -2,12 +2,12 @@ import os
 import sys
 
 import pygame
-
+from data import items_data
 from constants import *
 from data import waves, wave_enemies
 from shop import MainShop
 from enemy import Enemy, Ogre
-from tower import Tower, ArcherTower
+from tower import ArcherTowerLong, ArcherTowerShort, RangeTower, SpeedTower
 from buttons import ToggleButton
 from assets import pause_img, start_img, sound_on, sound_off
 
@@ -28,7 +28,9 @@ class Level:
         self.background = pygame.transform.scale(self.background, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
         # Import different items :
-        item_names = ['archers lvl 1', 'archers lvl 2', 'increase damage', 'increase range']
+        item_names = list(items_data.keys())
+        print(item_names)
+        item_names.remove('path')
 
         # creating the menu with each item
         self.shop = MainShop('right', item_names=item_names, buy_item=self.buy_tower)
@@ -138,14 +140,23 @@ class Level:
         if cost <= self.money:
             self.money -= cost
 
-            if name[0:6] == 'archer':
-                tower = ArcherTower(pos[0], pos[1], name, self.check_money)
+            if name == 'archers long':
+                tower = ArcherTowerLong(pos[0], pos[1], name, self.check_money)
                 self.archer_towers.append(tower)
-                self.towers.append(tower)
-            else:
-                tower = Tower(pos[0], pos[1], name, self.check_money)
+            elif name == 'archers short':
+                tower = ArcherTowerShort(pos[0], pos[1], name, self.check_money)
+                self.archer_towers.append(tower)
+            elif name == 'increase speed':
+                tower = SpeedTower(pos[0], pos[1], name, self.check_money)
                 self.support_towers.append(tower)
-                self.towers.append(tower)
+            elif name == 'increase range':
+                tower = RangeTower(pos[0], pos[1], name, self.check_money)
+                self.support_towers.append(tower)
+            else:
+                text = 'name: \'' + name + '\' is not a valid tower name'
+                raise Exception(text)
+
+            self.towers.append(tower)
             self.tower_selected = tower
 
     def run(self, events, dt):
@@ -163,10 +174,6 @@ class Level:
                 # return to menu with escape key
                 if event.key == pygame.K_ESCAPE:
                     self.show_menu()
-
-                # spawn enemy with space key
-                if event.key == pygame.K_SPACE:
-                    self.start_next_wave()
 
             elif event.type == pygame.MOUSEMOTION:
                 if self.tower_selected is not None:
@@ -202,6 +209,8 @@ class Level:
 
         # Towers
         for tower in self.support_towers:
+            tower.get_affected_towers(self.archer_towers)
+            tower.support()
             tower.draw(self.screen)
         for tower in self.archer_towers:
             if tower.placed:

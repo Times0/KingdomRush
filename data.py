@@ -1,11 +1,11 @@
-from assets import tower_imgs
+from assets import tower_imgs, tower_icons
 
-towers_data = {
+items_data = {
     'path': 'assets\\shop',
-    'archers lvl 1': ['buy_archer.png', 500, tower_imgs[0], [1000, 2000]],
-    'archers lvl 2': ['buy_archer_2.png', 750, tower_imgs[1], [1500, 2500]],
-    'increase damage': ['buy_damage.png', 1000, tower_imgs[2], [2000]],
-    'increase range': ['buy_range.png', 1500, tower_imgs[3], [3000]],
+    'archers long': {'icon': tower_icons[0], 'cost': 500, 'images': tower_imgs[0]},
+    'archers short': {'icon': tower_icons[1], 'cost': 750, 'images': tower_imgs[1]},
+    'increase speed': {'icon': tower_icons[2], 'cost': 1000, 'images': tower_imgs[2]},
+    'increase range': {'icon': tower_icons[3], 'cost': 1500, 'images': tower_imgs[3]},
 }
 
 # waves are in form
