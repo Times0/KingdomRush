@@ -15,7 +15,7 @@ sound_off = pygame.image.load(os.path.join(assets_folder, 'ui\\button_sound_off.
 
 
 # Enemies
-ogre_animations = import_animations(os.path.join(assets_folder, 'enemies\\enemy_1'))
+ogre_animations = import_animations(os.path.join(assets_folder, 'enemies\\enemy_1'), .5)
 
 # Towers
 # Tower images

@@ -201,9 +201,9 @@ class ArcherTower(Tower):
                 closest_enemy.hit(self.damage)
 
             # Changing the archers direction depending on the enemy position relative to the tower
-            if closest_enemy.centerx > self.centerx and not self.facing_right:
+            if closest_enemy.x > self.centerx and not self.facing_right:
                 self.facing_right = True
-            elif self.facing_right and closest_enemy.centerx < self.centerx:
+            elif self.facing_right and closest_enemy.x < self.centerx:
                 self.facing_right = False
 
     def update_pos(self, pos):

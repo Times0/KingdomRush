@@ -14,7 +14,8 @@ class Enemy:
     def __init__(self, animations=None, center=(130, 279), health=3, money=100):
 
         # attributes
-        self.health = health
+        self.max_health = health
+        self.health = self.max_health
         self.money = money
         self.dead = False
         self.off_screen = False
@@ -121,6 +122,18 @@ class Enemy:
         else:
             return False
 
+    def draw_health_bar(self, surface):
+        """
+        draw health bar above enemy
+        """
+
+        full_length = 50
+        health_percent = self.health / self.max_health
+        health_length = round(health_percent * full_length)
+
+        pygame.draw.rect(surface, (255, 0, 0), (self.x - 30, self.y - 120, full_length, 10), 0)
+        pygame.draw.rect(surface, (0, 255, 0), (self.x - 30, self.y - 120, health_length, 10), 0)
+
     def draw(self, surface):
 
         if self.facing_right:
@@ -130,6 +143,7 @@ class Enemy:
         y_offset = self.center[1]
 
         surface.blit(self.image, (self.x - x_offset, self.y - y_offset))
+        self.draw_health_bar(surface)
 
     def update(self, dt):
         if self.status != 'die':
@@ -142,8 +156,9 @@ class Ogre(Enemy):
 
     def __init__(self):
         self.animations = ogre_animations
-        super().__init__(animations=self.animations, center=(130, 279))
+        super().__init__(animations=self.animations, center=(65, 140))
 
-        self.health = 100
+        self.max_health = 100
+        self.health = self.max_health
         self.money = 100
         self.speed = 100
