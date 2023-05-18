@@ -14,7 +14,11 @@ sound_on = pygame.image.load(os.path.join(assets_folder, 'ui\\button_sound.png')
 sound_off = pygame.image.load(os.path.join(assets_folder, 'ui\\button_sound_off.png'))
 
 # Enemies
-ogre_animations = import_animations(os.path.join(assets_folder, 'enemies\\enemy_1'), .5)
+scorpion_animations = import_animations(os.path.join(assets_folder, 'enemies\\enemy_1'), .5)
+wizard_animations = import_animations(os.path.join(assets_folder, 'enemies\\enemy_2'), .3)
+ogre_animations = import_animations(os.path.join(assets_folder, 'enemies\\enemy_3'), .5)
+armored_ogre_animations = import_animations(os.path.join(assets_folder, 'enemies\\enemy_5'), .5)
+pekka_animations = import_animations(os.path.join(assets_folder, 'enemies\\enemy_8'), .5)
 
 # Towers
 # Tower images

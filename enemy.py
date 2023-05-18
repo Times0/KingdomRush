@@ -2,7 +2,7 @@ import math
 
 import pygame
 
-from assets import ogre_animations
+from assets import ogre_animations, pekka_animations, armored_ogre_animations, scorpion_animations, wizard_animations
 
 ENEMY_PATH = [(2000, 139), (1898, 139), (782, 131), (668, 259), (682, 405), (787, 485), (1059, 481), (1208, 534),
               (1237, 681),
@@ -152,13 +152,61 @@ class Enemy:
         self.animate(dt)
 
 
+class Scorpion(Enemy):
+
+    def __init__(self):
+        self.animations = scorpion_animations
+        super().__init__(animations=self.animations, center=(50, 75))
+
+        self.max_health = 3
+        self.health = self.max_health
+        self.money = 50
+        self.speed = 250
+
+
+class Wizard(Enemy):
+
+    def __init__(self):
+        self.animations = wizard_animations
+        super().__init__(animations=self.animations, center=(40, 70))
+
+        self.max_health = 10
+        self.health = self.max_health
+        self.money = 100
+        self.speed = 150
+
+
 class Ogre(Enemy):
 
     def __init__(self):
         self.animations = ogre_animations
         super().__init__(animations=self.animations, center=(65, 140))
 
+        self.max_health = 20
+        self.health = self.max_health
+        self.money = 150
+        self.speed = 175
+
+
+class ArmoredOgre(Enemy):
+
+    def __init__(self):
+        self.animations = armored_ogre_animations
+        super().__init__(animations=self.animations, center=(45, 120))
+
+        self.max_health = 50
+        self.health = self.max_health
+        self.money = 200
+        self.speed = 175
+
+
+class Pekka(Enemy):
+
+    def __init__(self):
+        self.animations = pekka_animations
+        super().__init__(animations=self.animations, center=(70, 125))
+
         self.max_health = 100
         self.health = self.max_health
-        self.money = 100
-        self.speed = 100
+        self.money = 500
+        self.speed = 200

@@ -6,7 +6,7 @@ from data import items_data
 from constants import *
 from data import waves, wave_enemies
 from shop import MainShop
-from enemy import Enemy, Ogre
+from enemy import Enemy, Ogre, Scorpion, Wizard, ArmoredOgre, Pekka
 from tower import ArcherTowerLong, ArcherTowerShort, RangeTower, SpeedTower
 from buttons import ToggleButton
 from assets import pause_img, start_img, sound_on, sound_off
@@ -76,7 +76,7 @@ class Level:
         self.wave_count = 0
         self.current_wave = None
         self.SPAWN_ENEMY = pygame.event.custom_type()
-        self.time_between_enemies = 2000
+        self.time_between_enemies = 1000
         self.last_enemy_time = -self.time_between_enemies
         self.path_debug = []
         self.wave_font = pygame.font.SysFont("arial", 80)
@@ -99,10 +99,18 @@ class Level:
                 self.last_enemy_time = pygame.time.get_ticks() - self.pause_time + self.last_enemy_time
         self.paused = False
 
-    def spawn_enemy(self, enemy_type='ogre'):
+    def spawn_enemy(self, enemy_type):
 
-        if enemy_type == 'ogre':
+        if enemy_type == 'scorpion':
+            enemy = Scorpion()
+        elif enemy_type == 'wizard':
+            enemy = Wizard()
+        elif enemy_type == 'ogre':
             enemy = Ogre()
+        elif enemy_type == 'armored_ogre':
+            enemy = ArmoredOgre()
+        elif enemy_type == 'pekka':
+            enemy = Pekka()
         else:
             enemy = Enemy()
         self.enemies.append(enemy)
