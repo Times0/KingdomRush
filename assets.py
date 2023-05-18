@@ -13,7 +13,6 @@ start_img = pygame.image.load(os.path.join(assets_folder, 'ui\\button_start.png'
 sound_on = pygame.image.load(os.path.join(assets_folder, 'ui\\button_sound.png'))
 sound_off = pygame.image.load(os.path.join(assets_folder, 'ui\\button_sound_off.png'))
 
-
 # Enemies
 ogre_animations = import_animations(os.path.join(assets_folder, 'enemies\\enemy_1'), .5)
 

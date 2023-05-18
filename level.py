@@ -34,14 +34,6 @@ class Level:
         # creating the menu with each item
         self.shop = MainShop('right', item_names=item_names, buy_item=self.buy_tower)
 
-        # Enemies
-        self.enemies = []
-        self.wave_count = 0
-        self.current_wave = None
-        self.SPAWN_ENEMY = pygame.event.custom_type()
-        self.time_between_enemies = 2000
-        self.last_enemy_time = -self.time_between_enemies
-
         # Towers
         self.archer_towers = []
         self.support_towers = []
@@ -61,6 +53,7 @@ class Level:
         self.heart_image = pygame.transform.scale(self.heart_image, (50, 50))
         self.health = 10
 
+
         # UI:
         self.buttons = []
         # Play/pause button:
@@ -78,7 +71,16 @@ class Level:
                                       [pygame.mixer.music.pause, pygame.mixer.music.unpause])
         self.buttons.append(self.music_btn)
 
+        # Enemies
+        self.enemies = []
+        self.wave_count = 0
+        self.current_wave = None
+        self.SPAWN_ENEMY = pygame.event.custom_type()
+        self.time_between_enemies = 2000
+        self.last_enemy_time = -self.time_between_enemies
         self.path_debug = []
+        self.wave_font = pygame.font.SysFont("arial", 80)
+        self.wave_bg = pygame.image.load("assets/ui/wave.png").convert_alpha()
 
     def start_next_wave(self):
 
@@ -146,6 +148,18 @@ class Level:
 
         surface.blit(text, (start_x - text.get_width() - 10, y))
         surface.blit(self.star_image, (start_x, y))
+
+    def draw_wave_counter(self, surface):
+
+        x = 10
+        y = 10
+
+        text_img = self.wave_font.render('Wave #'+str(self.wave_count+1), True, (255, 255, 255))
+
+        text_x = (self.wave_bg.get_width()-text_img.get_width())/2
+        text_y = (self.wave_bg.get_height()-text_img.get_height())/2
+        surface.blit(self.wave_bg, (x, y))
+        surface.blit(text_img, (x + text_x, y + text_y))
 
     def check_money(self, cost):
 
@@ -273,6 +287,7 @@ class Level:
         # UI:
         self.draw_money(self.screen)
         self.draw_health(self.screen)
+        self.draw_wave_counter(self.screen)
         for button in self.buttons:
             button.draw(self.screen)
 
