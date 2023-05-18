@@ -144,6 +144,7 @@ class ArcherTower(Tower):
         self.arrows = []
         self.archer_x = self.x + 50
         self.archer_y = self.y - 15
+        self.arrow_x = self.archer_x + self.archer_image.get_width()
 
         self.ranges = [300, 400, 500]
         self.range = self.ranges[self.level]
@@ -179,7 +180,15 @@ class ArcherTower(Tower):
 
         self.archer_image = image
 
-    def draw(self, surface, dt, draw_range=True, tower_selected=None):
+    def update_arrows(self, dt):
+        for arrow in self.arrows:
+            arrow.update(dt)
+            if arrow.check_target():
+                if arrow.target.status != 'die':
+                    arrow.target.hit(arrow.damage)
+                self.arrows.remove(arrow)
+
+    def draw(self, surface, draw_range=True, tower_selected=None):
 
         if tower_selected is not None:
             super().draw_placement_indicator(surface)
@@ -188,11 +197,7 @@ class ArcherTower(Tower):
         surface.blit(self.archer_image, (self.archer_x, self.archer_y))
 
         for arrow in self.arrows:
-            arrow.update(dt)
-            if arrow.check_target():
-                self.arrows.remove(arrow)
-            else:
-                arrow.draw(surface)
+            arrow.draw(surface)
 
         if draw_range and (not self.placed or self.selected):
             super().draw_range(surface)
@@ -225,16 +230,16 @@ class ArcherTower(Tower):
         if closest_enemy is not None:
 
             # Attacking the closest enemy
-            if not self.shooting:
-                self.shooting = True
-                closest_enemy.hit(self.damage)
-                self.arrows.append(Arrow(self.archer_x, self.archer_y, closest_enemy))
-
             # Changing the archers direction depending on the enemy position relative to the tower
             if closest_enemy.x > self.centerx and not self.facing_right:
                 self.facing_right = True
             elif self.facing_right and closest_enemy.x < self.centerx:
                 self.facing_right = False
+
+            if not self.shooting:
+                self.shooting = True
+
+                self.arrows.append(Arrow(self.archer_center_x, self.archer_center_y, closest_enemy, self.damage))
 
     def update_pos(self, pos):
 
@@ -244,6 +249,8 @@ class ArcherTower(Tower):
         self.y = self.centery - self.height / 2
         self.archer_x = self.x + 50
         self.archer_y = self.y - 15
+        self.archer_center_x = self.archer_x + self.archer_image.get_width() / 2
+        self.archer_center_y = self.archer_y + self.archer_image.get_height() / 2
 
 
 class SupportTower(Tower):
@@ -330,13 +337,14 @@ class ArcherTowerShort(ArcherTower):
 
 class Arrow:
 
-    def __init__(self, x, y, enemy):
-        self.x = x
-        self.y = y
+    def __init__(self, centerx, centery, enemy, damage):
+        self.centerx = centerx
+        self.centery = centery
         self.target = enemy
+        self.damage = damage
         self.image = arrow_img
-        self.centerx = x + self.image.get_width() / 2
-        self.centery = y + self.image.get_height() / 2
+        self.x = self.centerx - self.image.get_width() / 2
+        self.y = self.centery - self.image.get_height() / 2
         self.original_dir = (1, 0)
         self.rotated_image = self.image
         self.speed = 1000
@@ -381,6 +389,7 @@ class Arrow:
         self.centery += move_y
 
     def check_target(self):
+
         x = self.target.x
         y = self.target.y
 

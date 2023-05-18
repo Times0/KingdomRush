@@ -267,6 +267,7 @@ class Level:
             if tower.placed:
                 if not self.paused:
                     tower.attack(self.enemies)
+                    tower.update_arrows(dt)
                     tower.animate(dt)
             tower.draw(self.screen, dt, tower_selected=self.tower_selected)
 
