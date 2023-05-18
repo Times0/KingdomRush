@@ -29,7 +29,6 @@ class Level:
 
         # Import different items :
         item_names = list(items_data.keys())
-        print(item_names)
         item_names.remove('path')
 
         # creating the menu with each item
@@ -51,9 +50,15 @@ class Level:
 
         # Money :
         self.money_font = pygame.font.SysFont("arial", 50)
-        self.star_image = pygame.image.load("assets/shop/star.png").convert_alpha()
-        self.star_image = pygame.transform.scale_by(self.star_image, 2)
+        self.star_image = pygame.image.load("assets/ui/star.png").convert_alpha()
+        self.star_image = pygame.transform.scale(self.star_image, (50, 50))
         self.money = 10000
+
+        # Health
+        self.health_font = self.money_font
+        self.heart_image = pygame.image.load("assets/ui/heart.png").convert_alpha()
+        self.heart_image = pygame.transform.scale(self.heart_image, (50, 50))
+        self.health = 10
 
         # UI:
         self.buttons = []
@@ -99,6 +104,11 @@ class Level:
             enemy = Enemy()
         self.enemies.append(enemy)
 
+    def check_death(self):
+
+        if self.health <= 0:
+            self.show_menu()
+
     def spawn_next_enemy(self):
 
         if sum(self.current_wave) == 0:
@@ -116,16 +126,25 @@ class Level:
                     self.current_wave[enemy_index] -= 1
                     break
 
-    def draw_money(self, surface):
+    def draw_health(self, surface):
 
-        text = self.money_font.render(str(self.money), True, (255, 255, 255))
-        money = pygame.transform.scale(self.star_image, (50, 50))
+        text = self.health_font.render(str(self.health), True, (255, 255, 255))
 
-        start_x = WINDOW_WIDTH - self.star_image.get_width() - 10
+        start_x = WINDOW_WIDTH - self.heart_image.get_width() - 10
         y = 75
 
         surface.blit(text, (start_x - text.get_width() - 10, y))
-        surface.blit(money, (start_x, y))
+        surface.blit(self.heart_image, (start_x, y))
+
+    def draw_money(self, surface):
+
+        text = self.money_font.render(str(self.money), True, (255, 255, 255))
+
+        start_x = WINDOW_WIDTH - self.star_image.get_width() - 10
+        y = 10
+
+        surface.blit(text, (start_x - text.get_width() - 10, y))
+        surface.blit(self.star_image, (start_x, y))
 
     def check_money(self, cost):
 
@@ -223,13 +242,17 @@ class Level:
         for index, enemy in enumerate(self.enemies):
             if not self.paused:
                 enemy.update(dt)
-            if enemy.dead:
+            if enemy.dead or enemy.off_screen:
                 if index + 1 < len(self.enemies):
                     if not self.paused:
                         self.enemies[index + 1].update(dt)
                     self.enemies[index + 1].draw(self.screen)
                 self.enemies.remove(enemy)
-                self.money += enemy.money
+                if enemy.dead:
+                    self.money += enemy.money
+                elif enemy.off_screen:
+                    self.health -= 1
+                    self.check_death()
 
             else:
                 enemy.draw(self.screen)
@@ -239,6 +262,7 @@ class Level:
 
         # UI:
         self.draw_money(self.screen)
+        self.draw_health(self.screen)
         for button in self.buttons:
             button.draw(self.screen)
 

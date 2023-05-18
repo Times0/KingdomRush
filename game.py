@@ -8,8 +8,12 @@ class Game:
     def __init__(self):
 
         self.game_state = 'menu'
-        self.main_menu = MainMenu(self.show_level)
+        self.main_menu = MainMenu(self.create_level)
         self.level = Level(self.show_menu)
+
+    def create_level(self):
+        self.level = Level(self.show_menu)
+        self.show_level()
 
     def show_level(self):
         pygame.mixer.music.play(loops=-1)

@@ -1,4 +1,5 @@
 import pygame
+from assets import star_img
 
 
 class Button:
@@ -96,7 +97,7 @@ class Item:
         self.font = pygame.font.SysFont("arial", 20)
         self.text_image = self.font.render(str(self.cost), 1, (255, 255, 255)).convert_alpha()
 
-        self.star_image = pygame.image.load("assets/shop/star.png").convert_alpha()
+        self.star_image = star_img
         self.star_image = pygame.transform.scale_by(self.star_image,
                                                     (self.text_image.get_height() / self.star_image.get_height()))
 

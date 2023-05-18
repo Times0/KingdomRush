@@ -5,7 +5,7 @@ from load_assets import import_animations, import_folder
 assets_folder = 'assets'
 
 # General assets
-star_img = pygame.image.load(os.path.join(assets_folder, 'shop\\star.png'))
+star_img = pygame.image.load(os.path.join(assets_folder, 'ui\\star.png'))
 
 # Buttons:
 pause_img = pygame.image.load(os.path.join(assets_folder, 'ui\\button_pause.png'))

@@ -7,7 +7,7 @@ from assets import ogre_animations
 ENEMY_PATH = [(2000, 139), (1898, 139), (782, 131), (668, 259), (682, 405), (787, 485), (1059, 481), (1208, 534),
               (1237, 681),
               (1152, 807), (849, 823), (670, 823), (578, 771), (515, 772), (451, 816), (327, 784), (227, 740),
-              (0, 734)]
+              (0, 734), (-50, 734)]
 
 
 class Enemy:
@@ -17,6 +17,7 @@ class Enemy:
         self.health = health
         self.money = money
         self.dead = False
+        self.off_screen = False
 
         # movement
         self.center = center
@@ -94,16 +95,16 @@ class Enemy:
 
         self.path_pos += 1
         if self.path_pos >= len(self.path):
-            self.path_pos = 0
+            self.off_screen = True
+        else:
+            x1, y1 = self.x, self.y
+            x2, y2 = self.path[self.path_pos]
 
-        x1, y1 = self.x, self.y
-        x2, y2 = self.path[self.path_pos]
+            dirn = ((x2 - x1) * 2, (y2 - y1) * 2)
+            length = math.sqrt((dirn[0]) ** 2 + (dirn[1]) ** 2)
+            dirn = (dirn[0] / length, dirn[1] / length)
 
-        dirn = ((x2 - x1) * 2, (y2 - y1) * 2)
-        length = math.sqrt((dirn[0]) ** 2 + (dirn[1]) ** 2)
-        dirn = (dirn[0] / length, dirn[1] / length)
-
-        self.direction = dirn
+            self.direction = dirn
 
     def hit(self, damage):
 
@@ -140,8 +141,9 @@ class Enemy:
 class Ogre(Enemy):
 
     def __init__(self):
+        self.animations = ogre_animations
+        super().__init__(animations=self.animations, center=(130, 279))
+
         self.health = 100
         self.money = 100
-        self.animations = ogre_animations
-
-        super().__init__(animations=self.animations, center=(130, 279), health=self.health, money=self.money)
+        self.speed = 100

@@ -201,9 +201,9 @@ class ArcherTower(Tower):
                 closest_enemy.hit(self.damage)
 
             # Changing the archers direction depending on the enemy position relative to the tower
-            if closest_enemy.x > self.x and not self.facing_right:
+            if closest_enemy.centerx > self.centerx and not self.facing_right:
                 self.facing_right = True
-            elif self.facing_right and closest_enemy.x < self.x:
+            elif self.facing_right and closest_enemy.centerx < self.centerx:
                 self.facing_right = False
 
     def update_pos(self, pos):
@@ -243,6 +243,7 @@ class RangeTower(SupportTower):
     def __init__(self, centerx, centery, name, buy_function, level=0):
         super().__init__(centerx, centery, name, buy_function, level=level)
         self.upgrade_cost = [2000]
+        self.max_level = len(self.upgrade_cost)
         self.ranges = [250, 350]
         self.range = self.ranges[self.level]
         self.effect = [1.2, 1.4]
@@ -259,6 +260,7 @@ class SpeedTower(SupportTower):
     def __init__(self, centerx, centery, name, buy_function, level=0):
         super().__init__(centerx, centery, name, buy_function, level=level)
         self.upgrade_cost = [3000]
+        self.max_level = len(self.upgrade_cost)
         self.ranges = [250, 350]
         self.range = self.ranges[self.level]
         self.effect = [1.2, 2]
@@ -274,6 +276,7 @@ class ArcherTowerLong(ArcherTower):
     def __init__(self, centerx, centery, name, buy_function, level=0):
         super().__init__(centerx, centery, name, buy_function, level=level)
         self.upgrade_cost = [1000, 2000]
+        self.max_level = len(self.upgrade_cost)
         self.ranges = [400, 500, 600]
         self.range = self.ranges[self.level]
         self.damages = [1, 3, 6]
@@ -284,6 +287,7 @@ class ArcherTowerShort(ArcherTower):
     def __init__(self, centerx, centery, name, buy_function, level=0):
         super().__init__(centerx, centery, name, buy_function, level=level)
         self.upgrade_cost = [1000, 2000]
+        self.max_level = len(self.upgrade_cost)
         self.ranges = [250, 350, 450]
         self.range = self.ranges[self.level]
         self.damages = [2, 4, 8]
