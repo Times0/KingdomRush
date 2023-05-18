@@ -3,7 +3,7 @@ import os
 
 import pygame
 
-from assets import archer_animations
+from assets import archer_animations, arrow_img
 from buttons import Item
 from data import items_data
 from shop import VerticalShop
@@ -141,6 +141,7 @@ class ArcherTower(Tower):
         self.animation_speed = self.attack_speed
         self.facing_right = True
         self.shooting = False
+        self.arrows = []
         self.archer_x = self.x + 50
         self.archer_y = self.y - 15
 
@@ -178,13 +179,20 @@ class ArcherTower(Tower):
 
         self.archer_image = image
 
-    def draw(self, surface, draw_range=True, tower_selected=None):
+    def draw(self, surface, dt, draw_range=True, tower_selected=None):
 
         if tower_selected is not None:
             super().draw_placement_indicator(surface)
 
         surface.blit(self.image, (self.x, self.y))
         surface.blit(self.archer_image, (self.archer_x, self.archer_y))
+
+        for arrow in self.arrows:
+            arrow.update(dt)
+            if arrow.check_target():
+                self.arrows.remove(arrow)
+            else:
+                arrow.draw(surface)
 
         if draw_range and (not self.placed or self.selected):
             super().draw_range(surface)
@@ -220,6 +228,7 @@ class ArcherTower(Tower):
             if not self.shooting:
                 self.shooting = True
                 closest_enemy.hit(self.damage)
+                self.arrows.append(Arrow(self.archer_x, self.archer_y, closest_enemy))
 
             # Changing the archers direction depending on the enemy position relative to the tower
             if closest_enemy.x > self.centerx and not self.facing_right:
@@ -317,6 +326,79 @@ class ArcherTowerShort(ArcherTower):
         self.range = self.ranges[self.level]
         self.damages = [2, 4, 8]
         self.damage = self.damages[self.level]
+
+
+class Arrow:
+
+    def __init__(self, x, y, enemy):
+        self.x = x
+        self.y = y
+        self.target = enemy
+        self.image = arrow_img
+        self.centerx = x + self.image.get_width() / 2
+        self.centery = y + self.image.get_height() / 2
+        self.original_dir = (1, 0)
+        self.rotated_image = self.image
+        self.speed = 1000
+
+    def rotate(self, angle):
+        """rotate the image while keeping its center and size"""
+        rotated_image = pygame.transform.rotate(self.image, angle)
+        self.rotated_image = rotated_image
+
+    def update_direction(self):
+        x1, y1 = self.centerx, self.centery
+        x2, y2 = self.target.x, self.target.y
+
+        dirn = ((x2 - x1) * 2, (y2 - y1) * 2)
+        length = math.sqrt((dirn[0]) ** 2 + (dirn[1]) ** 2)
+        dirn = (dirn[0] / length, dirn[1] / length)
+
+        self.direction = dirn
+
+    def get_angle(self):
+
+        (x1, y1) = self.original_dir
+        (x2, y2) = self.direction
+
+        v1_theta = math.atan2(x1, y1)
+        v2_theta = math.atan2(x2, y2)
+
+        r = (v2_theta - v1_theta) * (180.0 / math.pi)
+
+        if r < 0:
+            r += 360.0
+
+        return r
+
+    def move(self, dt):
+        """Move enemy"""
+
+        dirn = self.direction
+        move_x, move_y = dirn[0] * self.speed * dt, dirn[1] * self.speed * dt
+
+        self.centerx += move_x
+        self.centery += move_y
+
+    def check_target(self):
+        x = self.target.x
+        y = self.target.y
+
+        dis = math.sqrt((self.centerx - x) ** 2 + (self.centery - y) ** 2)
+
+        if dis <= 50:
+            return True
+
+    def update(self, dt):
+        self.update_direction()
+        angle = self.get_angle()
+        self.rotate(angle)
+        self.move(dt)
+
+    def draw(self, surface):
+        self.x = self.centerx - self.rotated_image.get_width()
+        self.y = self.centery - self.rotated_image.get_height()
+        surface.blit(self.rotated_image, (self.x, self.y))
 
 
 COLOR_TURRET_RANGE = (123, 162, 115)

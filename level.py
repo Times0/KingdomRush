@@ -268,7 +268,7 @@ class Level:
                 if not self.paused:
                     tower.attack(self.enemies)
                     tower.animate(dt)
-            tower.draw(self.screen, tower_selected=self.tower_selected)
+            tower.draw(self.screen, dt, tower_selected=self.tower_selected)
 
         # Enemies
         for index, enemy in enumerate(self.enemies):
