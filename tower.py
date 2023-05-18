@@ -25,6 +25,8 @@ class Tower:
         self.range = self.ranges[self.level]
         self.placed = False
         self.selected = False
+        self.placement_range = 200
+        self.placement_allowed = True
 
         # size and pos
         self.centerx = centerx
@@ -56,7 +58,10 @@ class Tower:
         self.selected = False
         self.range = self.ranges[self.level]
 
-    def draw(self, surface, draw_range=True):
+    def draw(self, surface, draw_range=True, tower_selected=None):
+
+        if tower_selected is not None:
+            self.draw_placement_indicator(surface)
 
         surface.blit(self.image, (self.x, self.y))
 
@@ -65,6 +70,19 @@ class Tower:
 
         if self.selected and self.level != self.max_level:
             self.upgrade_menu.draw(surface)
+
+    def draw_placement_indicator(self, surface):
+
+        if self.placement_allowed:
+            color = (0, 0, 255, 100)
+        else:
+            color = (255, 0, 0, 100)
+
+        radius = self.placement_range / 2
+        surf = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA, 32)
+        pygame.draw.circle(surf, color, (radius, radius), radius)
+        # pygame.draw.circle(surf, COLOR_TURRET_radius_CONTOUR, (radius, radius), radius, 2)
+        surface.blit(surf, (self.centerx - radius, self.centery - radius))
 
     def draw_range(self, surface):
         surf = pygame.Surface((self.range * 2, self.range * 2), pygame.SRCALPHA, 32)
@@ -91,11 +109,11 @@ class Tower:
             self.selected = False
 
     def collide(self, other_tower):
-        x2 = other_tower.x
-        y2 = other_tower.y
+        x2 = other_tower.centerx
+        y2 = other_tower.centery
 
-        dis = math.sqrt((x2 - self.x) ** 2 + (y2 - self.y) ** 2)
-        if dis >= 100:
+        dis = math.sqrt((x2 - self.centerx) ** 2 + (y2 - self.centery) ** 2)
+        if dis >= self.placement_range:
             return False
         else:
             return True
@@ -160,7 +178,10 @@ class ArcherTower(Tower):
 
         self.archer_image = image
 
-    def draw(self, surface, draw_range=True):
+    def draw(self, surface, draw_range=True, tower_selected=None):
+
+        if tower_selected is not None:
+            super().draw_placement_indicator(surface)
 
         surface.blit(self.image, (self.x, self.y))
         surface.blit(self.archer_image, (self.archer_x, self.archer_y))

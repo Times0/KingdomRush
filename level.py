@@ -42,11 +42,12 @@ class Level:
         self.time_between_enemies = 2000
         self.last_enemy_time = -self.time_between_enemies
 
-        # Towers list
+        # Towers
         self.archer_towers = []
         self.support_towers = []
         self.towers = []
         self.tower_selected = None
+        self.allowed_tower_placement = True
 
         # Money :
         self.money_font = pygame.font.SysFont("arial", 50)
@@ -197,6 +198,14 @@ class Level:
             elif event.type == pygame.MOUSEMOTION:
                 if self.tower_selected is not None:
                     self.tower_selected.update_pos(event.pos)
+                    self.tower_selected.placement_allowed = True
+                    for tower in self.towers:
+                        if tower is not self.tower_selected:
+                            if self.tower_selected.collide(tower):
+                                tower.placement_allowed = False
+                                self.tower_selected.placement_allowed = False
+                            else:
+                                tower.placement_allowed = True
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 self.path_debug.append(event.pos)
@@ -208,14 +217,15 @@ class Level:
                         if button.on_click:
                             button.on_click()
 
-                if self.tower_selected is not None:
-                    self.tower_selected.place(event.pos)
-                    self.tower_selected = None
-                else:
+                if self.tower_selected is None:
                     for tower in self.towers:
                         tower.check_click(event.pos)
+                    self.shop.update(event.pos)
 
-                self.shop.update(event.pos)
+                else:
+                    if self.tower_selected.placement_allowed:
+                        self.tower_selected.place(event.pos)
+                        self.tower_selected = None
 
         # Spawning enemies:
         if self.current_wave is not None:
@@ -230,13 +240,13 @@ class Level:
         for tower in self.support_towers:
             tower.get_affected_towers(self.archer_towers)
             tower.support()
-            tower.draw(self.screen)
+            tower.draw(self.screen, tower_selected=self.tower_selected)
         for tower in self.archer_towers:
             if tower.placed:
                 if not self.paused:
                     tower.attack(self.enemies)
                     tower.animate(dt)
-            tower.draw(self.screen)
+            tower.draw(self.screen, tower_selected=self.tower_selected)
 
         # Enemies
         for index, enemy in enumerate(self.enemies):
