@@ -253,7 +253,7 @@ class SupportTower(Tower):
 
             dis = math.sqrt((self.centerx - x) ** 2 + (self.centery - y) ** 2)
 
-            if dis <= self.range + tower.width / 2 and type(tower) is ArcherTower:
+            if dis <= self.range:
                 affected_towers.append(tower)
 
         self.affected_towers = affected_towers
@@ -264,6 +264,7 @@ class RangeTower(SupportTower):
     def __init__(self, centerx, centery, name, buy_function, level=0):
         super().__init__(centerx, centery, name, buy_function, level=level)
         self.upgrade_cost = [2000]
+        self.upgrade_menu.items[0].change_cost(self.upgrade_cost[self.level])
         self.max_level = len(self.upgrade_cost)
         self.ranges = [250, 350]
         self.range = self.ranges[self.level]
@@ -281,6 +282,7 @@ class SpeedTower(SupportTower):
     def __init__(self, centerx, centery, name, buy_function, level=0):
         super().__init__(centerx, centery, name, buy_function, level=level)
         self.upgrade_cost = [3000]
+        self.upgrade_menu.items[0].change_cost(self.upgrade_cost[self.level])
         self.max_level = len(self.upgrade_cost)
         self.ranges = [250, 350]
         self.range = self.ranges[self.level]
@@ -297,6 +299,7 @@ class ArcherTowerLong(ArcherTower):
     def __init__(self, centerx, centery, name, buy_function, level=0):
         super().__init__(centerx, centery, name, buy_function, level=level)
         self.upgrade_cost = [1000, 2000]
+        self.upgrade_menu.items[0].change_cost(self.upgrade_cost[self.level])
         self.max_level = len(self.upgrade_cost)
         self.ranges = [400, 500, 600]
         self.range = self.ranges[self.level]
@@ -308,6 +311,7 @@ class ArcherTowerShort(ArcherTower):
     def __init__(self, centerx, centery, name, buy_function, level=0):
         super().__init__(centerx, centery, name, buy_function, level=level)
         self.upgrade_cost = [1000, 2000]
+        self.upgrade_menu.items[0].change_cost(self.upgrade_cost[self.level])
         self.max_level = len(self.upgrade_cost)
         self.ranges = [250, 350, 450]
         self.range = self.ranges[self.level]
